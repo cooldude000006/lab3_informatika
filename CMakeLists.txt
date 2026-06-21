@@ -35,6 +35,7 @@ add_executable(${PROJECT_NAME}
         array_vector.h
         vector_math.h
         list_vector.h
+        sequence_io.h
 )
 
 # Файл с модульными тестами
