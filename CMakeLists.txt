@@ -6,11 +6,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Строгий режим предупреждений (полезно для учебных работ)
+# Строгий режим предупреждений
 if(MSVC)
     add_compile_options(/W4 /WX)
-    # 🔑 Критично для Windows: заставляет компилятор использовать UTF-8
-    # для исходного кода и вывода в консоль. Без этого кириллица может "поехать".
     add_compile_options(/utf-8)
 else()
     add_compile_options(-Wall -Wextra -Wpedantic -Werror)
@@ -33,6 +31,10 @@ add_executable(${PROJECT_NAME}
         bit_sequence.h
         ienumerator.h
         icollection.h
+        ivector.h
+        array_vector.h
+        vector_math.h
+        list_vector.h
 )
 
 # Файл с модульными тестами
@@ -41,7 +43,6 @@ add_executable(${PROJECT_NAME}_tests
 )
 
 # Подключение заголовочных файлов
-# ⚠️ Так как все шаблоны реализованы в .h файлах, отдельной "библиотеки" не нужно.
 # Компилятор увидит .h через target_include_directories.
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR})
 target_include_directories(${PROJECT_NAME}_tests PRIVATE ${CMAKE_SOURCE_DIR})

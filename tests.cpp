@@ -1,7 +1,15 @@
 #include <gtest/gtest.h>
 #include <iostream>
 #include <locale>
+#include <complex>
+#include <cmath>
 
+#include "list_vector.h"
+#include "array_vector.h"
+#include "ivector.h"
+#include "icollection.h"
+#include "ienumerable.h"
+#include "ienumerator.h"
 #include "dynamic_array.h"
 #include "linked_list.h"
 #include "mutable_array_sequence.h"
@@ -10,12 +18,1056 @@
 #include "immutable_list_sequence.h"
 #include "bit_sequence.h"
 #include "option.h"
-#include "icollection.h"
 
 #ifdef _WIN32
 #include <windows.h>
 #endif
 
+//ListVectorTest
+//создание и доступ
+TEST(ListVectorTest, ConstructionAndAccess)
+{
+    int items[] = {10, 20, 30};
+
+    lab2::ListVector<int> vector(items, 3);
+
+    EXPECT_EQ(vector.GetDimension(), 3u);
+    EXPECT_EQ(vector.GetCount(), 3u);
+
+    EXPECT_EQ(vector.Get(0), 10);
+    EXPECT_EQ(vector.Get(1), 20);
+    EXPECT_EQ(vector.Get(2), 30);
+}
+
+//конструктор по размерности
+TEST(ListVectorTest, DimensionConstructor)
+{
+    lab2::ListVector<int> vector(4);
+
+    EXPECT_EQ(vector.GetDimension(), 4u);
+
+    EXPECT_EQ(vector.Get(0), 0);
+    EXPECT_EQ(vector.Get(1), 0);
+    EXPECT_EQ(vector.Get(2), 0);
+    EXPECT_EQ(vector.Get(3), 0);
+}
+
+//отрицательная размерность
+TEST(ListVectorTest, NegativeDimensionThrows)
+{
+    EXPECT_THROW(
+        {
+            lab2::ListVector<int> vector(-1);
+        },
+        lab2::InvalidOperationException
+    );
+}
+
+//неправильный индекс
+TEST(ListVectorTest, InvalidIndexThrows)
+{
+    int items[] = {1, 2, 3};
+
+    lab2::ListVector<int> vector(items, 3);
+
+    EXPECT_THROW(
+        vector.Get(vector.GetDimension()),
+        lab2::IndexOutOfRangeException
+    );
+}
+
+//копирующий конструктор
+TEST(ListVectorTest, CopyConstructorCreatesIndependentCopy)
+{
+    lab2::ListVector<int>* copy = nullptr;
+
+    {
+        int items[] = {1, 2, 3};
+
+        lab2::ListVector<int> original(items, 3);
+
+        copy = new lab2::ListVector<int>(
+            original
+        );
+    }
+
+    // Исходный объект уже уничтожен.
+    EXPECT_EQ(copy->GetDimension(), 3u);
+    EXPECT_EQ(copy->Get(0), 1);
+    EXPECT_EQ(copy->Get(1), 2);
+    EXPECT_EQ(copy->Get(2), 3);
+
+    delete copy;
+}
+
+//оператор присваивания
+TEST(ListVectorTest, AssignmentCreatesIndependentCopy)
+{
+    int targetItems[] = {10, 20};
+
+    lab2::ListVector<int> target(
+        targetItems,
+        2
+    );
+
+    {
+        int sourceItems[] = {1, 2, 3};
+
+        lab2::ListVector<int> source(
+            sourceItems,
+            3
+        );
+
+        target = source;
+    }
+
+    // source уничтожен, target должен сохранить данные.
+    EXPECT_EQ(target.GetDimension(), 3u);
+    EXPECT_EQ(target.Get(0), 1);
+    EXPECT_EQ(target.Get(1), 2);
+    EXPECT_EQ(target.Get(2), 3);
+
+    target = target;
+
+    EXPECT_EQ(target.GetDimension(), 3u);
+    EXPECT_EQ(target.Get(0), 1);
+}
+
+//сложение
+TEST(ListVectorTest, Addition)
+{
+    int firstItems[] = {1, 2, 3};
+    int secondItems[] = {4, 5, 6};
+
+    lab2::ListVector<int> first(
+        firstItems,
+        3
+    );
+
+    lab2::ListVector<int> second(
+        secondItems,
+        3
+    );
+
+    lab2::IVector<int>* result =
+        first.Add(second);
+
+    ASSERT_NE(result, nullptr);
+
+    EXPECT_EQ(result->GetDimension(), 3u);
+    EXPECT_EQ(result->Get(0), 5);
+    EXPECT_EQ(result->Get(1), 7);
+    EXPECT_EQ(result->Get(2), 9);
+
+    // Исходные векторы не изменились.
+    EXPECT_EQ(first.Get(0), 1);
+    EXPECT_EQ(second.Get(0), 4);
+
+    delete result;
+}
+
+//умножение и скалярное произведение
+TEST(ListVectorTest, ScalarMultiplicationAndDotProduct)
+{
+    int firstItems[] = {1, 2, 3};
+    int secondItems[] = {4, 5, 6};
+
+    lab2::ListVector<int> first(
+        firstItems,
+        3
+    );
+
+    lab2::ListVector<int> second(
+        secondItems,
+        3
+    );
+
+    lab2::IVector<int>* multiplied =
+        first.MultiplyByScalar(3);
+
+    ASSERT_NE(multiplied, nullptr);
+
+    EXPECT_EQ(multiplied->Get(0), 3);
+    EXPECT_EQ(multiplied->Get(1), 6);
+    EXPECT_EQ(multiplied->Get(2), 9);
+
+    EXPECT_EQ(first.DotProduct(second), 32);
+
+    delete multiplied;
+}
+
+//норма
+TEST(ListVectorTest, Norm)
+{
+    double items[] = {3.0, 4.0};
+
+    lab2::ListVector<double> vector(
+        items,
+        2
+    );
+
+    EXPECT_NEAR(vector.Norm(), 5.0, 1e-9);
+}
+
+//несовпадающие размерности
+TEST(ListVectorTest, DifferentDimensionsThrow)
+{
+    int firstItems[] = {1, 2, 3};
+    int secondItems[] = {4, 5};
+
+    lab2::ListVector<int> first(
+        firstItems,
+        3
+    );
+
+    lab2::ListVector<int> second(
+        secondItems,
+        2
+    );
+
+    EXPECT_THROW(
+        first.Add(second),
+        lab2::SizeMismatchException
+    );
+
+    EXPECT_THROW(
+        first.DotProduct(second),
+        lab2::SizeMismatchException
+    );
+}
+
+//MapWhereReduce
+TEST(ListVectorTest, MapWhereReduce)
+{
+    int items[] = {1, 2, 3, 4};
+
+    lab2::ListVector<int> vector(
+        items,
+        4
+    );
+
+    lab2::IVector<int>* mapped =
+        vector.Map(
+            [](int value)
+            {
+                return value * 2;
+            }
+        );
+
+    ASSERT_NE(mapped, nullptr);
+
+    EXPECT_EQ(mapped->GetDimension(), 4u);
+    EXPECT_EQ(mapped->Get(0), 2);
+    EXPECT_EQ(mapped->Get(3), 8);
+
+    lab2::IVector<int>* filtered =
+        vector.Where(
+            [](int value)
+            {
+                return value > 2;
+            }
+        );
+
+    ASSERT_NE(filtered, nullptr);
+
+    EXPECT_EQ(filtered->GetDimension(), 2u);
+    EXPECT_EQ(filtered->Get(0), 3);
+    EXPECT_EQ(filtered->Get(1), 4);
+
+    int sum = vector.Reduce(
+        [](int accumulator, int value)
+        {
+            return accumulator + value;
+        },
+        0
+    );
+
+    EXPECT_EQ(sum, 10);
+
+    delete mapped;
+    delete filtered;
+}
+
+//комплексные числа
+TEST(ListVectorTest, ComplexDotProductAndNorm)
+{
+    using Complex = std::complex<double>;
+
+    Complex items[] = {
+        Complex(1.0, 1.0)
+    };
+
+    lab2::ListVector<Complex> vector(
+        items,
+        1
+    );
+
+    Complex result =
+        vector.DotProduct(vector);
+
+    EXPECT_NEAR(result.real(), 2.0, 1e-9);
+    EXPECT_NEAR(result.imag(), 0.0, 1e-9);
+
+    EXPECT_NEAR(
+        vector.Norm(),
+        std::sqrt(2.0),
+        1e-9
+    );
+}
+
+//ArrayVectorTest
+//создание и получение координат
+TEST(ArrayVectorTest, ConstructionAndAccess)
+{
+    int items[] = {10, 20, 30};
+
+    lab2::ArrayVector<int> vector(items, 3);
+
+    EXPECT_EQ(vector.GetDimension(), 3u);
+    EXPECT_EQ(vector.GetCount(), 3u);
+    EXPECT_EQ(vector.Get(0), 10);
+    EXPECT_EQ(vector.Get(1), 20);
+    EXPECT_EQ(vector.Get(2), 30);
+}
+
+//полиморфная работа
+TEST(ArrayVectorTest, WorksThroughInterfaces)
+{
+    int items[] = {1, 2, 3};
+
+    lab2::ArrayVector<int> vector(items, 3);
+
+    lab2::IVector<int>* mathematicalVector =
+        &vector;
+
+    lab2::ICollection<int>* collection =
+        &vector;
+
+    EXPECT_EQ(
+        mathematicalVector->GetDimension(),
+        3u
+    );
+
+    EXPECT_EQ(collection->GetCount(), 3u);
+    EXPECT_EQ(collection->Get(1), 2);
+}
+
+//неправильный индекс
+TEST(ArrayVectorTest, InvalidIndexThrows)
+{
+    int items[] = {1, 2, 3};
+
+    lab2::ArrayVector<int> vector(items, 3);
+
+    EXPECT_THROW(
+        vector.Get(vector.GetDimension()),
+        lab2::IndexOutOfRangeException
+    );
+}
+
+//глубокое копирование
+TEST(ArrayVectorTest, CopyConstructorCreatesIndependentCopy)
+{
+    lab2::ArrayVector<int>* copy = nullptr;
+
+    {
+        int items[] = {1, 2, 3};
+
+        lab2::ArrayVector<int> original(items, 3);
+
+        copy = new lab2::ArrayVector<int>(
+            original
+        );
+    }
+
+    // original уже уничтожен, но copy должен работать.
+    EXPECT_EQ(copy->GetDimension(), 3u);
+    EXPECT_EQ(copy->Get(0), 1);
+    EXPECT_EQ(copy->Get(1), 2);
+    EXPECT_EQ(copy->Get(2), 3);
+
+    delete copy;
+}
+
+//оператор присваивания
+TEST(ArrayVectorTest, AssignmentCreatesIndependentCopy)
+{
+    int firstItems[] = {1, 2, 3};
+    int secondItems[] = {10, 20};
+
+    lab2::ArrayVector<int> source(
+        firstItems,
+        3
+    );
+
+    lab2::ArrayVector<int> target(
+        secondItems,
+        2
+    );
+
+    target = source;
+
+    EXPECT_EQ(target.GetDimension(), 3u);
+    EXPECT_EQ(target.Get(0), 1);
+    EXPECT_EQ(target.Get(1), 2);
+    EXPECT_EQ(target.Get(2), 3);
+
+    // Самоприсваивание не должно повреждать объект.
+    target = target;
+
+    EXPECT_EQ(target.GetDimension(), 3u);
+    EXPECT_EQ(target.Get(0), 1);
+}
+
+//сложение
+TEST(ArrayVectorTest, Addition)
+{
+    int firstItems[] = {1, 2, 3};
+    int secondItems[] = {4, 5, 6};
+
+    lab2::ArrayVector<int> first(
+        firstItems,
+        3
+    );
+
+    lab2::ArrayVector<int> second(
+        secondItems,
+        3
+    );
+
+    lab2::IVector<int>* result =
+        first.Add(second);
+
+    ASSERT_NE(result, nullptr);
+
+    EXPECT_EQ(result->GetDimension(), 3u);
+    EXPECT_EQ(result->Get(0), 5);
+    EXPECT_EQ(result->Get(1), 7);
+    EXPECT_EQ(result->Get(2), 9);
+
+    // Исходные векторы не должны измениться.
+    EXPECT_EQ(first.Get(0), 1);
+    EXPECT_EQ(second.Get(0), 4);
+
+    delete result;
+}
+
+//несовпадающие размерности
+TEST(ArrayVectorTest, DifferentDimensionsThrow)
+{
+    int firstItems[] = {1, 2, 3};
+    int secondItems[] = {4, 5};
+
+    lab2::ArrayVector<int> first(
+        firstItems,
+        3
+    );
+
+    lab2::ArrayVector<int> second(
+        secondItems,
+        2
+    );
+
+    EXPECT_THROW(
+        first.Add(second),
+        lab2::SizeMismatchException
+    );
+
+    EXPECT_THROW(
+        first.DotProduct(second),
+        lab2::SizeMismatchException
+    );
+}
+
+//умножение на скаляр
+TEST(ArrayVectorTest, MultiplyByScalar)
+{
+    int items[] = {1, 2, 3};
+
+    lab2::ArrayVector<int> vector(items, 3);
+
+    lab2::IVector<int>* result =
+        vector.MultiplyByScalar(4);
+
+    ASSERT_NE(result, nullptr);
+
+    EXPECT_EQ(result->Get(0), 4);
+    EXPECT_EQ(result->Get(1), 8);
+    EXPECT_EQ(result->Get(2), 12);
+
+    // Исходный вектор не изменился.
+    EXPECT_EQ(vector.Get(0), 1);
+    EXPECT_EQ(vector.Get(1), 2);
+    EXPECT_EQ(vector.Get(2), 3);
+
+    delete result;
+}
+
+//скалярное произведение
+TEST(ArrayVectorTest, DotProduct)
+{
+    int firstItems[] = {1, 2, 3};
+    int secondItems[] = {4, 5, 6};
+
+    lab2::ArrayVector<int> first(
+        firstItems,
+        3
+    );
+
+    lab2::ArrayVector<int> second(
+        secondItems,
+        3
+    );
+
+    int result = first.DotProduct(second);
+
+    EXPECT_EQ(result, 32);
+}
+
+//норма
+TEST(ArrayVectorTest, Norm)
+{
+    double items[] = {3.0, 4.0};
+
+    lab2::ArrayVector<double> vector(
+        items,
+        2
+    );
+
+    EXPECT_NEAR(vector.Norm(), 5.0, 1e-9);
+}
+
+//комплексные координаты
+TEST(ArrayVectorTest, ComplexDotProductAndNorm)
+{
+    using Complex = std::complex<double>;
+
+    Complex items[] = {
+        Complex(1.0, 1.0)
+    };
+
+    lab2::ArrayVector<Complex> vector(
+        items,
+        1
+    );
+
+    Complex dot = vector.DotProduct(vector);
+
+    EXPECT_NEAR(dot.real(), 2.0, 1e-9);
+    EXPECT_NEAR(dot.imag(), 0.0, 1e-9);
+
+    EXPECT_NEAR(
+        vector.Norm(),
+        std::sqrt(2.0),
+        1e-9
+    );
+}
+
+//MapWhereReduce
+TEST(ArrayVectorTest, MapWhereReduce)
+{
+    int items[] = {1, 2, 3, 4};
+
+    lab2::ArrayVector<int> vector(
+        items,
+        4
+    );
+
+    lab2::IVector<int>* mapped =
+        vector.Map(
+            [](int value)
+            {
+                return value * 2;
+            }
+        );
+
+    ASSERT_NE(mapped, nullptr);
+
+    EXPECT_EQ(mapped->GetDimension(), 4u);
+    EXPECT_EQ(mapped->Get(0), 2);
+    EXPECT_EQ(mapped->Get(3), 8);
+
+    lab2::IVector<int>* filtered =
+        vector.Where(
+            [](int value)
+            {
+                return value % 2 == 0;
+            }
+        );
+
+    ASSERT_NE(filtered, nullptr);
+
+    EXPECT_EQ(filtered->GetDimension(), 2u);
+    EXPECT_EQ(filtered->Get(0), 2);
+    EXPECT_EQ(filtered->Get(1), 4);
+
+    int sum = vector.Reduce(
+        [](int accumulator, int value)
+        {
+            return accumulator + value;
+        },
+        0
+    );
+
+    EXPECT_EQ(sum, 10);
+
+    delete mapped;
+    delete filtered;
+}
+
+//операции между arrayvector и listvector
+//сложение ArrayVector и ListVector
+TEST(VectorPolymorphismTest, ArrayAndListVectorsCanBeAdded)
+{
+    int arrayItems[] = {1, 2, 3};
+    int listItems[] = {4, 5, 6};
+
+    lab2::ArrayVector<int> arrayVector(
+        arrayItems,
+        3
+    );
+
+    lab2::ListVector<int> listVector(
+        listItems,
+        3
+    );
+
+    lab2::IVector<int>* firstResult =
+        arrayVector.Add(listVector);
+
+    lab2::IVector<int>* secondResult =
+        listVector.Add(arrayVector);
+
+    ASSERT_NE(firstResult, nullptr);
+    ASSERT_NE(secondResult, nullptr);
+
+    EXPECT_EQ(firstResult->GetDimension(), 3u);
+    EXPECT_EQ(firstResult->Get(0), 5);
+    EXPECT_EQ(firstResult->Get(1), 7);
+    EXPECT_EQ(firstResult->Get(2), 9);
+
+    EXPECT_EQ(secondResult->GetDimension(), 3u);
+    EXPECT_EQ(secondResult->Get(0), 5);
+    EXPECT_EQ(secondResult->Get(1), 7);
+    EXPECT_EQ(secondResult->Get(2), 9);
+
+    // Исходные объекты не изменились.
+    EXPECT_EQ(arrayVector.Get(0), 1);
+    EXPECT_EQ(listVector.Get(0), 4);
+
+    delete firstResult;
+    delete secondResult;
+}
+
+//скалярное произведение
+TEST(VectorPolymorphismTest, DotProductWorksBetweenArrayAndList)
+{
+    int arrayItems[] = {1, 2, 3};
+    int listItems[] = {4, 5, 6};
+
+    lab2::ArrayVector<int> arrayVector(
+        arrayItems,
+        3
+    );
+
+    lab2::ListVector<int> listVector(
+        listItems,
+        3
+    );
+
+    EXPECT_EQ(
+        arrayVector.DotProduct(listVector),
+        32
+    );
+
+    EXPECT_EQ(
+        listVector.DotProduct(arrayVector),
+        32
+    );
+}
+
+//работа через все базовые интерфейсы
+TEST(VectorPolymorphismTest, WorksThroughAllBaseInterfaces)
+{
+    int items[] = {10, 20, 30};
+
+    lab2::ArrayVector<int> vector(items, 3);
+
+    lab2::IVector<int>* mathematicalVector =
+        &vector;
+
+    lab2::ICollection<int>* collection =
+        &vector;
+
+    lab2::IEnumerable<int>* enumerable =
+        &vector;
+
+    EXPECT_EQ(
+        mathematicalVector->GetDimension(),
+        3u
+    );
+
+    EXPECT_EQ(collection->GetCount(), 3u);
+    EXPECT_EQ(collection->Get(0), 10);
+    EXPECT_EQ(collection->Get(2), 30);
+
+    lab2::IEnumerator<int>* enumerator =
+        enumerable->GetEnumerator();
+
+    ASSERT_NE(enumerator, nullptr);
+
+    EXPECT_TRUE(enumerator->MoveNext());
+    EXPECT_TRUE(
+        enumerator->GetCurrent().HasValue()
+    );
+    EXPECT_EQ(
+        enumerator->GetCurrent().GetValue(),
+        10
+    );
+
+    delete enumerator;
+}
+
+//проверка итератора ArrayVector
+TEST(VectorEnumeratorTest, ArrayVectorEnumeratorWorks)
+{
+    int items[] = {10, 20, 30};
+
+    lab2::ArrayVector<int> vector(items, 3);
+
+    lab2::IEnumerator<int>* enumerator =
+        vector.GetEnumerator();
+
+    ASSERT_NE(enumerator, nullptr);
+
+    // До первого MoveNext текущего элемента нет.
+    EXPECT_FALSE(
+        enumerator->GetCurrent().HasValue()
+    );
+
+    EXPECT_TRUE(enumerator->MoveNext());
+    EXPECT_EQ(
+        enumerator->GetCurrent().GetValue(),
+        10
+    );
+
+    EXPECT_TRUE(enumerator->MoveNext());
+    EXPECT_EQ(
+        enumerator->GetCurrent().GetValue(),
+        20
+    );
+
+    EXPECT_TRUE(enumerator->MoveNext());
+    EXPECT_EQ(
+        enumerator->GetCurrent().GetValue(),
+        30
+    );
+
+    // После конца последовательности элемента нет.
+    EXPECT_FALSE(enumerator->MoveNext());
+    EXPECT_FALSE(
+        enumerator->GetCurrent().HasValue()
+    );
+
+    // После Reset перебор можно начать заново.
+    enumerator->Reset();
+
+    EXPECT_FALSE(
+        enumerator->GetCurrent().HasValue()
+    );
+
+    EXPECT_TRUE(enumerator->MoveNext());
+    EXPECT_EQ(
+        enumerator->GetCurrent().GetValue(),
+        10
+    );
+
+    delete enumerator;
+}
+
+//проверка итератора ListVector
+TEST(VectorEnumeratorTest, ListVectorEnumeratorWorks)
+{
+    int items[] = {5, 15, 25};
+
+    lab2::ListVector<int> vector(items, 3);
+
+    lab2::IEnumerator<int>* enumerator =
+        vector.GetEnumerator();
+
+    ASSERT_NE(enumerator, nullptr);
+
+    EXPECT_FALSE(
+        enumerator->GetCurrent().HasValue()
+    );
+
+    EXPECT_TRUE(enumerator->MoveNext());
+    EXPECT_EQ(
+        enumerator->GetCurrent().GetValue(),
+        5
+    );
+
+    EXPECT_TRUE(enumerator->MoveNext());
+    EXPECT_EQ(
+        enumerator->GetCurrent().GetValue(),
+        15
+    );
+
+    EXPECT_TRUE(enumerator->MoveNext());
+    EXPECT_EQ(
+        enumerator->GetCurrent().GetValue(),
+        25
+    );
+
+    EXPECT_FALSE(enumerator->MoveNext());
+    EXPECT_FALSE(
+        enumerator->GetCurrent().HasValue()
+    );
+
+    enumerator->Reset();
+
+    EXPECT_TRUE(enumerator->MoveNext());
+    EXPECT_EQ(
+        enumerator->GetCurrent().GetValue(),
+        5
+    );
+
+    delete enumerator;
+}
+
+//пустые мат векторы
+TEST(VectorBoundaryTest, EmptyVectorsWorkCorrectly)
+{
+    lab2::ArrayVector<int> arrayVector;
+    lab2::ListVector<int> listVector;
+
+    EXPECT_EQ(arrayVector.GetDimension(), 0u);
+    EXPECT_EQ(listVector.GetDimension(), 0u);
+
+    EXPECT_DOUBLE_EQ(arrayVector.Norm(), 0.0);
+    EXPECT_DOUBLE_EQ(listVector.Norm(), 0.0);
+
+    EXPECT_THROW(
+        arrayVector.Get(0),
+        lab2::IndexOutOfRangeException
+    );
+
+    EXPECT_THROW(
+        listVector.Get(0),
+        lab2::IndexOutOfRangeException
+    );
+
+    int arrayResult = arrayVector.Reduce(
+        [](int accumulator, int value)
+        {
+            return accumulator + value;
+        },
+        100
+    );
+
+    int listResult = listVector.Reduce(
+        [](int accumulator, int value)
+        {
+            return accumulator + value;
+        },
+        100
+    );
+
+    EXPECT_EQ(arrayResult, 100);
+    EXPECT_EQ(listResult, 100);
+
+    lab2::IVector<int>* sum =
+        arrayVector.Add(listVector);
+
+    ASSERT_NE(sum, nullptr);
+    EXPECT_EQ(sum->GetDimension(), 0u);
+
+    lab2::IVector<int>* mapped =
+        arrayVector.Map(
+            [](int value)
+            {
+                return value * 2;
+            }
+        );
+
+    ASSERT_NE(mapped, nullptr);
+    EXPECT_EQ(mapped->GetDimension(), 0u);
+
+    delete sum;
+    delete mapped;
+}
+
+//проверка nullptr
+//полложительное кол-во координат
+TEST(VectorErrorTest, NullptrWithPositiveCountThrows)
+{
+    EXPECT_THROW(
+        {
+            lab2::ArrayVector<int> vector(
+                nullptr,
+                3
+            );
+        },
+        lab2::InvalidOperationException
+    );
+
+    EXPECT_THROW(
+        {
+            lab2::ListVector<int> vector(
+                nullptr,
+                3
+            );
+        },
+        lab2::InvalidOperationException
+    );
+}
+//нулевое кол-во координат
+TEST(VectorBoundaryTest, NullptrWithZeroCountCreatesEmptyVector)
+{
+    lab2::ArrayVector<int> arrayVector(
+        nullptr,
+        0
+    );
+
+    lab2::ListVector<int> listVector(
+        nullptr,
+        0
+    );
+
+    EXPECT_EQ(arrayVector.GetDimension(), 0u);
+    EXPECT_EQ(listVector.GetDimension(), 0u);
+
+    EXPECT_DOUBLE_EQ(arrayVector.Norm(), 0.0);
+    EXPECT_DOUBLE_EQ(listVector.Norm(), 0.0);
+}
+
+//отрицательная размерность
+TEST(VectorErrorTest, NegativeDimensionThrows)
+{
+    EXPECT_THROW(
+        {
+            lab2::ArrayVector<int> vector(-1);
+        },
+        lab2::InvalidOperationException
+    );
+
+    EXPECT_THROW(
+        {
+            lab2::ListVector<int> vector(-1);
+        },
+        lab2::InvalidOperationException
+    );
+}
+
+//разные размерности и разные реализации
+TEST(VectorErrorTest, DifferentImplementationsAndDimensionsThrow)
+{
+    int arrayItems[] = {1, 2, 3};
+    int listItems[] = {4, 5};
+
+    lab2::ArrayVector<int> arrayVector(
+        arrayItems,
+        3
+    );
+
+    lab2::ListVector<int> listVector(
+        listItems,
+        2
+    );
+
+    EXPECT_THROW(
+        arrayVector.Add(listVector),
+        lab2::SizeMismatchException
+    );
+
+    EXPECT_THROW(
+        listVector.Add(arrayVector),
+        lab2::SizeMismatchException
+    );
+
+    EXPECT_THROW(
+        arrayVector.DotProduct(listVector),
+        lab2::SizeMismatchException
+    );
+
+    EXPECT_THROW(
+        listVector.DotProduct(arrayVector),
+        lab2::SizeMismatchException
+    );
+
+    // После исключений исходные объекты должны работать.
+    EXPECT_EQ(arrayVector.GetDimension(), 3u);
+    EXPECT_EQ(arrayVector.Get(0), 1);
+
+    EXPECT_EQ(listVector.GetDimension(), 2u);
+    EXPECT_EQ(listVector.Get(0), 4);
+}
+
+//исключения внутри map и where
+TEST(VectorErrorTest, MapAndWherePropagateExceptions)
+{
+    int items[] = {1, 2, 3, 4};
+
+    lab2::ArrayVector<int> vector(
+        items,
+        4
+    );
+
+    EXPECT_THROW(
+        {
+            lab2::IVector<int>* result =
+                vector.Map(
+                    [](int value)
+                    {
+                        if (value == 2)
+                        {
+                            throw lab2::InvalidOperationException(
+                                "ошибка функции Map"
+                            );
+                        }
+
+                        return value * 2;
+                    }
+                );
+
+            // Выполнится только в случае,
+            // если исключение ошибочно не возникло.
+            delete result;
+        },
+        lab2::InvalidOperationException
+    );
+
+    EXPECT_THROW(
+        {
+            lab2::IVector<int>* result =
+                vector.Where(
+                    [](int value)
+                    {
+                        if (value == 3)
+                        {
+                            throw lab2::InvalidOperationException(
+                                "ошибка функции Where"
+                            );
+                        }
+
+                        return value % 2 == 0;
+                    }
+                );
+
+            delete result;
+        },
+        lab2::InvalidOperationException
+    );
+
+    // Исходный вектор не должен измениться.
+    EXPECT_EQ(vector.GetDimension(), 4u);
+    EXPECT_EQ(vector.Get(0), 1);
+    EXPECT_EQ(vector.Get(1), 2);
+    EXPECT_EQ(vector.Get(2), 3);
+    EXPECT_EQ(vector.Get(3), 4);
+}
+
+// ICollectionTest
 //работа через интерфейс с массивом
 TEST(ICollectionTest, WorksWithArraySequence)
 {
@@ -994,7 +2046,7 @@ int main(int argc, char **argv) {
     SetConsoleCP(CP_UTF8);
 #endif
     std::cout
-        << "=== Запуск модульных тестов лабораторной работы №2 ===\n";
+        << "=== Запуск модульных тестов лабораторной работы №3 ===\n";
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
