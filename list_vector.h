@@ -140,67 +140,18 @@ namespace lab2
             );
         }
 
-        IVector<T>* Add(
-            const IVector<T>& other
-        ) const override
+        IVector<T>* Add(const IVector<T>& other) const override
         {
-            ValidateSameDimension(
-                other,
-                "сложение математических векторов"
+            return new ListVector<T>(
+                (*this) + other
             );
-
-            ListVector<T>* result =
-                new ListVector<T>();
-
-            try
-            {
-                for (
-                    std::size_t i = 0;
-                    i < GetDimension();
-                    ++i
-                )
-                {
-                    result->AppendCoordinate(
-                        Get(i) + other.Get(i)
-                    );
-                }
-            }
-            catch (...)
-            {
-                delete result;
-                throw;
-            }
-
-            return result;
         }
 
-        IVector<T>* MultiplyByScalar(
-            const T& scalar
-        ) const override
+        IVector<T>* MultiplyByScalar(const T& scalar) const override
         {
-            ListVector<T>* result =
-                new ListVector<T>();
-
-            try
-            {
-                for (
-                    std::size_t i = 0;
-                    i < GetDimension();
-                    ++i
-                )
-                {
-                    result->AppendCoordinate(
-                        Get(i) * scalar
-                    );
-                }
-            }
-            catch (...)
-            {
-                delete result;
-                throw;
-            }
-
-            return result;
+            return new ListVector<T>(
+                (*this) * scalar
+            );
         }
 
         T DotProduct(
@@ -253,6 +204,46 @@ namespace lab2
         IEnumerator<T>* GetEnumerator() const override
         {
             return coordinates_->GetEnumerator();
+        }
+
+        ListVector<T> operator+(const IVector<T>& other) const
+        {
+            ValidateSameDimension(
+                other,
+                "сложение математических векторов"
+            );
+
+            ListVector<T> result;
+
+            for (std::size_t i = 0; i < GetDimension(); ++i)
+            {
+                result.AppendCoordinate(
+                    Get(i) + other.Get(i)
+                );
+            }
+
+            return result;
+        }
+
+        ListVector<T> operator*(
+            const T& scalar
+        ) const
+        {
+            ListVector<T> result;
+
+            for (std::size_t i = 0; i < GetDimension(); ++i)
+            {
+                result.AppendCoordinate(
+                    Get(i) * scalar
+                );
+            }
+
+            return result;
+        }
+
+        T operator[](std::size_t index) const
+        {
+            return Get(index);
         }
 
     protected:

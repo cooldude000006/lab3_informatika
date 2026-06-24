@@ -1,5 +1,5 @@
 #pragma once
-#include <stdexcept>
+#include <exception>
 #include <string>
 #include <cstddef>
 
@@ -60,20 +60,23 @@ namespace lab2
 		}
 	};
 
-	class EmptyCollectionException: public Exception
+	class SizeMismatchException : public Exception
 	{
 	public:
-		EmptyCollectionException(const std::string& collectionType)
-			: Exception("Коллекция пуста: " + collectionType)
-		{
-		}
-    };
-
-	class SizeMismatchException: public Exception
-	{
-	public:
-		SizeMismatchException(size_t expected, size_t actual, const std::string& operation = "")
-			: Exception("Несовпадение размеров: ожидается=" + std::to_string(expected)+ ", фактически=" + std::to_string(actual)+ (operation.empty() ? "" : ", операция=" + operation))
+		SizeMismatchException(
+			std::size_t expected,
+			std::size_t actual,
+			const std::string& operation = ""
+		)
+			: Exception(
+				"Несовпадение размеров: ожидается=" +
+				std::to_string(expected) +
+				", фактически=" +
+				std::to_string(actual) +
+				(operation.empty()
+					? ""
+					: ", операция=" + operation)
+			)
 		{
 		}
 	};

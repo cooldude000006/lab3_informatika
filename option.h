@@ -1,5 +1,4 @@
 #pragma once
-#include <stdexcept>
 #include "exceptions.h"
 
 namespace lab2
@@ -43,12 +42,6 @@ namespace lab2
         {
             return has_value_ ? value_ : defaultValue;
         }
-
-        explicit operator bool() const //Оператор приведения к bool
-        {
-            return has_value_;
-        }
     };
-
 }
 

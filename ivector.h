@@ -98,12 +98,11 @@ namespace lab2
         ) const
         {
             TAccumulator accumulator = initial;
-
             for (std::size_t i = 0; i < GetDimension(); ++i)
             {
                 accumulator = function(
-                    accumulator,
-                    Get(i)
+                    Get(i),
+                    accumulator
                 );
             }
             return accumulator;

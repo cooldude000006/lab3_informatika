@@ -76,32 +76,20 @@ namespace lab2 {
         virtual Sequence<T>* Concat(Sequence<T>* list) const = 0;//сцепить с другой последовательностью
 
         //map-reduce
-        template<typename Func> // применить функцию к каждому элементу
-        Sequence<T>* Map(Func f) const
+        template<typename Func>
+        Sequence<T>* Map(Func function) const
         {
             Sequence<T>* result = CreateEmpty();
-            for (int i = 0; i < GetLength(); ++i)
-            {
-                Sequence<T>* next = result->Append(f(Get(i)));
-                if (next != result)
-                {
-                    delete result;
-                    result = next;
-                }
-            }
-            return result;
-        }
 
-        template<typename Predicate> // отфильтровать элементы по предикату
-        Sequence<T>* Where(Predicate pred) const
-        {
-            Sequence<T>* result = CreateEmpty();
-            for (int i = 0; i < GetLength(); ++i)
+            try
             {
-                T item = Get(i);
-                if (pred(item))
+                for (int i = 0; i < GetLength(); ++i)
                 {
-                    Sequence<T>* next = result->Append(item);
+                    Sequence<T>* next =
+                        result->Append(
+                            function(Get(i))
+                        );
+
                     if (next != result)
                     {
                         delete result;
@@ -109,26 +97,64 @@ namespace lab2 {
                     }
                 }
             }
+            catch (...)
+            {
+                delete result;
+                throw;
+            }
             return result;
         }
 
-        template <typename Func, typename TAcc> //свернкть последовательность в одно число
+        template<typename Predicate>
+        Sequence<T>* Where(Predicate predicate) const
+        {
+            Sequence<T>* result = CreateEmpty();
+
+            try
+            {
+                for (int i = 0; i < GetLength(); ++i)
+                {
+                    T item = Get(i);
+
+                    if (predicate(item))
+                    {
+                        Sequence<T>* next =
+                            result->Append(item);
+
+                        if (next != result)
+                        {
+                            delete result;
+                            result = next;
+                        }
+                    }
+                }
+            }
+            catch (...)
+            {
+                delete result;
+                throw;
+            }
+            return result;
+        }
+
+
+        template<typename Func, typename TAcc>
         TAcc Reduce(Func f, TAcc initial) const
         {
             TAcc acc = initial;
-            for (int i=0; i<GetLength(); ++i)
+            for (int i = 0; i < GetLength(); ++i)
             {
-                acc = f(acc, Get(i));
+                acc = f(Get(i), acc);
             }
             return acc;
         }
 
-        //
+
+
         T operator[](int index) const //оператор [] доступа по индексу(перегрузка)
         {
             return Get(index);
         }
-        //
 
     protected:
         virtual Sequence<T>* CreateEmpty() const = 0; //вспомогательный метод создания пустой последовательности того же типа

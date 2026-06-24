@@ -28,14 +28,6 @@ FetchContent_MakeAvailable(googletest)
 # Основной файл (консольный UI)
 add_executable(${PROJECT_NAME}
         main.cpp
-        bit_sequence.h
-        ienumerator.h
-        icollection.h
-        ivector.h
-        array_vector.h
-        vector_math.h
-        list_vector.h
-        sequence_io.h
 )
 
 # Файл с модульными тестами

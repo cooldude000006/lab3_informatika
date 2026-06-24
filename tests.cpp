@@ -1,6 +1,4 @@
 #include <gtest/gtest.h>
-#include <iostream>
-#include <locale>
 #include <complex>
 #include <cmath>
 
@@ -16,12 +14,146 @@
 #include "immutable_array_sequence.h"
 #include "mutable_list_sequence.h"
 #include "immutable_list_sequence.h"
-#include "bit_sequence.h"
 #include "option.h"
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
+
+//Operator +/*/[] Test
+TEST(VectorOperatorTest, ArrayVectorOperatorsWork)
+{
+    int firstItems[] = {1, 2, 3};
+    int secondItems[] = {4, 5, 6};
+
+    lab2::ArrayVector<int> first(
+        firstItems,
+        3
+    );
+
+    lab2::ListVector<int> second(
+        secondItems,
+        3
+    );
+
+    lab2::ArrayVector<int> sum =
+        first + second;
+
+    EXPECT_EQ(sum[0], 5);
+    EXPECT_EQ(sum[1], 7);
+    EXPECT_EQ(sum[2], 9);
+
+    lab2::ArrayVector<int> multiplied =
+        first * 3;
+
+    EXPECT_EQ(multiplied[0], 3);
+    EXPECT_EQ(multiplied[1], 6);
+    EXPECT_EQ(multiplied[2], 9);
+
+    EXPECT_EQ(first[1], 2);
+}
+
+TEST(VectorOperatorTest, ListVectorOperatorsWork)
+{
+    int firstItems[] = {1, 2, 3};
+    int secondItems[] = {4, 5, 6};
+
+    lab2::ListVector<int> first(
+        firstItems,
+        3
+    );
+
+    lab2::ArrayVector<int> second(
+        secondItems,
+        3
+    );
+
+    lab2::ListVector<int> sum =
+        first + second;
+
+    EXPECT_EQ(sum[0], 5);
+    EXPECT_EQ(sum[1], 7);
+    EXPECT_EQ(sum[2], 9);
+
+    lab2::ListVector<int> multiplied =
+        first * 4;
+
+    EXPECT_EQ(multiplied[0], 4);
+    EXPECT_EQ(multiplied[1], 8);
+    EXPECT_EQ(multiplied[2], 12);
+}
+
+TEST(VectorOperatorTest, AdditionWithDifferentDimensionsThrows)
+{
+    int firstItems[] = {1, 2, 3};
+    int secondItems[] = {4, 5};
+
+    lab2::ArrayVector<int> first(firstItems,3);
+
+    lab2::ListVector<int> second(secondItems,2);
+
+    EXPECT_THROW(first + second,lab2::SizeMismatchException);
+}
+
+//неправильный индекс через operator[]
+TEST(VectorOperatorTest, BracketsInvalidIndexThrows)
+{
+    int items[] = {10, 20, 30};
+
+    lab2::ArrayVector<int> arrayVector(items,3);
+
+    lab2::ListVector<int> listVector(items,3);
+
+    EXPECT_THROW(arrayVector[3],lab2::IndexOutOfRangeException);
+
+    EXPECT_THROW(listVector[3],lab2::IndexOutOfRangeException);
+}
+
+//операторы не изм исходный вектор
+TEST(VectorOperatorTest, OperatorsDoNotChangeOriginalVectors)
+{
+    int firstItems[] = {1, 2, 3};
+    int secondItems[] = {4, 5, 6};
+
+    lab2::ArrayVector<int> first(firstItems,3);
+
+    lab2::ListVector<int> second(secondItems,3);
+
+    lab2::ArrayVector<int> sum = first + second;
+
+    lab2::ArrayVector<int> multiplied = first * 10;
+
+    // Проверяем результаты.
+    EXPECT_EQ(sum[0], 5);
+    EXPECT_EQ(multiplied[0], 10);
+
+    // Проверяем исходные объекты.
+    EXPECT_EQ(first[0], 1);
+    EXPECT_EQ(first[1], 2);
+    EXPECT_EQ(first[2], 3);
+
+    EXPECT_EQ(second[0], 4);
+    EXPECT_EQ(second[1], 5);
+    EXPECT_EQ(second[2], 6);
+}
+
+//VectorReduceTest
+TEST(VectorReduceTest, UsesElementThenAccumulatorOrder)
+{
+    int items[] = {1, 2, 3};
+
+    lab2::ArrayVector<int> vector(
+        items,
+        3
+    );
+
+    int result = vector.Reduce(
+        [](int value, int accumulator)
+        {
+            return 2 * value + 3 * accumulator;
+        },
+        4
+    );
+
+    EXPECT_EQ(result, 144);
+}
 
 //ListVectorTest
 //создание и доступ
@@ -1127,115 +1259,7 @@ TEST(ICollectionTest, InvalidIndexThrows)
     );
 }
 
-//для bitsequence
-TEST(BitSequenceTest, BasicConstruction)
-{
-    bool raw[] = {true,false,true,false};
-    lab2::BitSequence bs(raw, 4);
 
-    EXPECT_EQ(bs.GetLength(), 4);
-    EXPECT_TRUE(bs.Get(0).value);
-    EXPECT_FALSE(bs.Get(1).value);
-    EXPECT_TRUE(bs.Get(2).value);
-    EXPECT_FALSE(bs.Get(3).value);
-}
-
-TEST(BitSequenceTest, BitwiseAnd)
-{
-    bool a_raw[] = {1, 1, 0, 0};
-    bool b_raw[] = {1, 0, 1, 0};
-    lab2::BitSequence a(a_raw, 4);
-    lab2::BitSequence b(b_raw, 4);
-
-    lab2::BitSequence* res = a.And(&b);
-
-    EXPECT_EQ(res->GetLength(), 4);
-    EXPECT_TRUE(res->Get(0).value);
-    EXPECT_FALSE(res->Get(1).value);
-    EXPECT_FALSE(res->Get(2).value);
-    EXPECT_FALSE(res->Get(3).value);
-    delete res;
-}
-
-TEST(BitSequenceTest, BitwiseOr)
-{
-    bool a_raw[] = {1, 0, 0, 0};
-    bool b_raw[] = {0, 0, 1, 0};
-    lab2::BitSequence a(a_raw, 4);
-    lab2::BitSequence b(b_raw, 4);
-
-    lab2::BitSequence* res = a.Or(&b);
-
-    EXPECT_TRUE(res->Get(0).value);
-    EXPECT_FALSE(res->Get(1).value);
-    EXPECT_TRUE(res->Get(2).value);
-    EXPECT_FALSE(res->Get(3).value);
-    delete res;
-}
-
-TEST(BitSequenceTest, BitwiseXor)
-{
-    bool a_raw[] = {1, 1, 0, 0};
-    bool b_raw[] = {1, 0, 1, 0};
-    lab2::BitSequence a(a_raw, 4);
-    lab2::BitSequence b(b_raw, 4);
-
-    lab2::BitSequence* res = a.Xor(&b);
-
-    EXPECT_FALSE(res->Get(0).value);
-    EXPECT_TRUE(res->Get(1).value);
-    EXPECT_TRUE(res->Get(2).value);
-    EXPECT_FALSE(res->Get(3).value);
-    delete res;
-}
-
-TEST(BitSequenceTest, BitwiseNot)
-{
-    bool raw[] = {1, 0, 1, 0};
-    lab2::BitSequence bs(raw, 4);
-
-    lab2::BitSequence* res = bs.Not();
-
-    EXPECT_FALSE(res->Get(0).value); // !1 = 0
-    EXPECT_TRUE(res->Get(1).value);  // !0 = 1
-    EXPECT_FALSE(res->Get(2).value); // !1 = 0
-    EXPECT_TRUE(res->Get(3).value);  // !0 = 1
-    delete res;
-}
-
-TEST(BitSequenceTest, SizeMismatchException)
-{
-    bool a_raw[] = {1, 0};
-    bool b_raw[] = {1, 0, 1};
-
-    lab2::BitSequence a(a_raw, 2);
-    lab2::BitSequence b(b_raw, 3);
-
-    EXPECT_THROW(a.And(&b), lab2::SizeMismatchException);
-    EXPECT_THROW(a.Or(&b), lab2::SizeMismatchException);
-    EXPECT_THROW(a.Xor(&b), lab2::SizeMismatchException);
-}
-
-TEST(BitSequenceTest, NullptrException)
-{
-    bool raw[] = {1, 0};
-    lab2::BitSequence a(raw, 2);
-
-    EXPECT_THROW(a.And(nullptr), lab2::InvalidOperationException);
-}
-
-TEST(BitSequenceTest, NullptrWithPositiveCountThrows)
-{
-    EXPECT_THROW(
-        {
-            lab2::BitSequence sequence(
-                static_cast<bool*>(nullptr),
-                3
-            );
-        },
-        lab2::InvalidOperationException
-    );
-}
 
 // тесты для DynamicArray
 TEST(DynamicArrayTest, ConstructorFromCArray)
@@ -2040,16 +2064,6 @@ TEST(IteratorTest, EmptySequenceEnumerator)
     delete it;
 }
 
-int main(int argc, char **argv) {
-#ifdef _WIN32
-    SetConsoleOutputCP(CP_UTF8);
-    SetConsoleCP(CP_UTF8);
-#endif
-    std::cout
-        << "=== Запуск модульных тестов лабораторной работы №3 ===\n";
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
 
 
 

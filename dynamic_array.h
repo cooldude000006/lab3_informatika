@@ -1,5 +1,4 @@
 #pragma once
-#include <stdexcept>
 #include <algorithm>
 #include "exceptions.h"
 
@@ -100,24 +99,34 @@ namespace lab2
             {
                 return *this;
             }
+
+            T* newData = nullptr;
+
+            if (other.size_ > 0)
+            {
+                newData = new T[other.size_];
+
+                try
+                {
+                    std::copy(
+                        other.data_,
+                        other.data_ + other.size_,
+                        newData
+                    );
+                }
+                catch (...)
+                {
+                    delete[] newData;
+                    throw;
+                }
+            }
+
+            // Старая память удаляется только после того, как новая создана
             delete[] data_;
+
+            data_ = newData;
             size_ = other.size_;
-            if (size_ == 0)
-            {
-                data_ = nullptr;
-                return *this;
-            }
-            data_ = new T[size_];
-            try
-            {
-                std::copy(other.data_, other.data_ + size_, data_);
-            }
-            catch (...)
-            {
-                data_ = nullptr;
-                size_ = 0;
-                throw;
-            }
+
             return *this;
         }
 

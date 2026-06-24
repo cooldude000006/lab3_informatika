@@ -352,10 +352,10 @@ double read_double(const string& message)
 }
 
 // Вывод математического вектора.
-void print_vector(const lab2::IVector<double>& vector)
+template<class T>
+void print_vector(const lab2::IVector<T>& vector)
 {
     cout << "(";
-
     for (
         size_t i = 0;
         i < vector.GetDimension();
@@ -369,7 +369,6 @@ void print_vector(const lab2::IVector<double>& vector)
             cout << ", ";
         }
     }
-
     cout << ")";
 }
 
@@ -626,10 +625,10 @@ void perform_reduce(
 )
 {
     double sum = current.Reduce(
-        [](double accumulator, double value)
-        {
-            return accumulator + value;
-        },
+    [](double value, double accumulator)
+    {
+        return value + accumulator;
+    },
         0.0
     );
 
