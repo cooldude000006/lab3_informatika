@@ -1,7 +1,7 @@
 #pragma once
 #include <complex>
 
-namespace lab2
+namespace lab3
 {
     namespace vector_detail
     {

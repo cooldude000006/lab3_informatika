@@ -3,7 +3,7 @@
 #include <string>
 #include <cstddef>
 
-namespace lab2
+namespace lab3
 {
     class Exception : public std::exception
     {

@@ -2,7 +2,7 @@
 #include <cstddef>
 #include "icollection.h"
 #include "ienumerable.h"
-namespace lab2
+namespace lab3
 {
     template<class T>
     class IVector :

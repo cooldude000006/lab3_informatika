@@ -8,7 +8,7 @@
 #include "exceptions.h"
 #include "vector_math.h"
 
-namespace lab2
+namespace lab3
 {
     template<class T>
     class ListVector : public IVector<T>

@@ -3,7 +3,7 @@
 #include "linked_list.h"
 #include "list_enumerator.h"
 
-namespace lab2
+namespace lab3
 {
     template<class T>
     class MutableListSequence : public Sequence<T>

@@ -4,7 +4,7 @@
 #include "ienumerable.h"
 #include "option.h"
 #include "icollection.h"
-namespace lab2 {
+namespace lab3 {
     template<class T>
     class Sequence :
         public ICollection<T>,

@@ -1,18 +1,21 @@
 #pragma once
 #include "option.h"
 
-namespace lab2
+namespace lab3
 {
     template <typename T>
     class IEnumerator
     {
     public:
-        virtual ~IEnumerator() = default; //Переместить курсор к следующему элементу
+        virtual ~IEnumerator() = default;
 
-        virtual bool MoveNext() = 0; //Получить текущий элемент
+        // Переместить курсор к следующему элементу.
+        virtual bool MoveNext() = 0;
 
-        virtual Option<T> GetCurrent() const = 0; //Получить текущий элемент
+        // Получить текущий элемент.
+        virtual Option<T> GetCurrent() const = 0;
 
-        virtual void Reset() = 0; // Сбросить курсор в начало(до первого)
+        // Сбросить курсор в позицию перед первым элементом.
+        virtual void Reset() = 0;
     };
 }

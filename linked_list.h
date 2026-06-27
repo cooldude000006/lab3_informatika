@@ -1,7 +1,7 @@
 #pragma once
 #include "exceptions.h"
 
-namespace lab2
+namespace lab3
 {
     template<class T>
     class LinkedList

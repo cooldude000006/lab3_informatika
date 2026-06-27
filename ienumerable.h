@@ -1,7 +1,7 @@
 #pragma once
 #include "ienumerator.h"
 
-namespace lab2 {
+namespace lab3 {
     template <typename T>
     class IEnumerable {
     public:

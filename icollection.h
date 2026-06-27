@@ -1,6 +1,6 @@
 #pragma once
 #include <cstddef>
-namespace lab2
+namespace lab3
 {
     template<class T>
     class ICollection

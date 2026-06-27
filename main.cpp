@@ -65,7 +65,7 @@ double measure_average_microseconds(
 }
 
 VectorPerformanceResult measure_vector_performance(
-    const lab2::IVector<double>& vector,
+    const lab3::IVector<double>& vector,
     int repetitions
 )
 {
@@ -95,7 +95,7 @@ VectorPerformanceResult measure_vector_performance(
         measure_average_microseconds(
             [&vector]()
             {
-                lab2::IVector<double>* multiplied =
+                lab3::IVector<double>* multiplied =
                     vector.MultiplyByScalar(1.5);
 
                 double control = 0.0;
@@ -203,12 +203,12 @@ void perform_performance_comparison()
 
     try
     {
-        lab2::ArrayVector<double> arrayVector(
+        lab3::ArrayVector<double> arrayVector(
             coordinates,
             dimension
         );
 
-        lab2::ListVector<double> listVector(
+        lab3::ListVector<double> listVector(
             coordinates,
             dimension
         );
@@ -353,7 +353,7 @@ double read_double(const string& message)
 
 // Вывод математического вектора.
 template<class T>
-void print_vector(const lab2::IVector<T>& vector)
+void print_vector(const lab3::IVector<T>& vector)
 {
     cout << "(";
     for (
@@ -373,7 +373,7 @@ void print_vector(const lab2::IVector<T>& vector)
 }
 
 // Создание вектора с ручным вводом координат.
-lab2::IVector<double>* create_vector_interactive()
+lab3::IVector<double>* create_vector_interactive()
 {
     cout << "\n=== Создание математического вектора ===\n";
     cout << "1. ArrayVector\n";
@@ -405,14 +405,14 @@ lab2::IVector<double>* create_vector_interactive()
         );
     }
 
-    lab2::IVector<double>* result = nullptr;
+    lab3::IVector<double>* result = nullptr;
 
     try
     {
         if (type == 1)
         {
             result =
-                new lab2::ArrayVector<double>(
+                new lab3::ArrayVector<double>(
                     coordinates,
                     dimension
                 );
@@ -420,7 +420,7 @@ lab2::IVector<double>* create_vector_interactive()
         else
         {
             result =
-                new lab2::ListVector<double>(
+                new lab3::ListVector<double>(
                     coordinates,
                     dimension
                 );
@@ -439,7 +439,7 @@ lab2::IVector<double>* create_vector_interactive()
 
 // Проверка наличия текущего вектора.
 bool check_current_vector(
-    const lab2::IVector<double>* vector
+    const lab3::IVector<double>* vector
 )
 {
     if (vector == nullptr)
@@ -455,15 +455,15 @@ bool check_current_vector(
 
 // Сложение текущего вектора с новым.
 void perform_addition(
-    const lab2::IVector<double>& current
+    const lab3::IVector<double>& current
 )
 {
     cout << "\nСоздайте второй вектор.\n";
 
-    lab2::IVector<double>* other =
+    lab3::IVector<double>* other =
         create_vector_interactive();
 
-    lab2::IVector<double>* result = nullptr;
+    lab3::IVector<double>* result = nullptr;
 
     try
     {
@@ -493,14 +493,14 @@ void perform_addition(
 
 // Умножение на скаляр.
 void perform_scalar_multiplication(
-    const lab2::IVector<double>& current
+    const lab3::IVector<double>& current
 )
 {
     double scalar = read_double(
         "Введите значение скаляра: "
     );
 
-    lab2::IVector<double>* result =
+    lab3::IVector<double>* result =
         current.MultiplyByScalar(scalar);
 
     try
@@ -524,12 +524,12 @@ void perform_scalar_multiplication(
 
 // Скалярное произведение.
 void perform_dot_product(
-    const lab2::IVector<double>& current
+    const lab3::IVector<double>& current
 )
 {
     cout << "\nСоздайте второй вектор.\n";
 
-    lab2::IVector<double>* other =
+    lab3::IVector<double>* other =
         create_vector_interactive();
 
     try
@@ -557,10 +557,10 @@ void perform_dot_product(
 
 // Map: умножение каждой координаты на 2.
 void perform_map(
-    const lab2::IVector<double>& current
+    const lab3::IVector<double>& current
 )
 {
-    lab2::IVector<double>* result =
+    lab3::IVector<double>* result =
         current.Map(
             [](double value)
             {
@@ -589,10 +589,10 @@ void perform_map(
 
 // Where: оставить только положительные координаты.
 void perform_where(
-    const lab2::IVector<double>& current
+    const lab3::IVector<double>& current
 )
 {
-    lab2::IVector<double>* result =
+    lab3::IVector<double>* result =
         current.Where(
             [](double value)
             {
@@ -621,7 +621,7 @@ void perform_where(
 
 // Reduce: сумма координат.
 void perform_reduce(
-    const lab2::IVector<double>& current
+    const lab3::IVector<double>& current
 )
 {
     double sum = current.Reduce(
@@ -638,10 +638,10 @@ void perform_reduce(
 
 // Демонстрация итератора.
 void perform_iteration(
-    const lab2::IVector<double>& current
+    const lab3::IVector<double>& current
 )
 {
-    lab2::IEnumerator<double>* enumerator =
+    lab3::IEnumerator<double>* enumerator =
         current.GetEnumerator();
 
     try
@@ -652,7 +652,7 @@ void perform_iteration(
 
         while (enumerator->MoveNext())
         {
-            lab2::Option<double> value =
+            lab3::Option<double> value =
                 enumerator->GetCurrent();
 
             if (value.HasValue())
@@ -679,7 +679,7 @@ void perform_iteration(
 }
 
 void show_menu(
-    const lab2::IVector<double>* current
+    const lab3::IVector<double>* current
 )
 {
     cout << "\n"
@@ -727,7 +727,7 @@ int main()
 
     cout << fixed << setprecision(4);
 
-    lab2::IVector<double>* current = nullptr;
+    lab3::IVector<double>* current = nullptr;
 
     bool running = true;
 
@@ -753,7 +753,7 @@ int main()
 
                 case 1:
                 {
-                    lab2::IVector<double>* newVector =
+                    lab3::IVector<double>* newVector =
                         create_vector_interactive();
 
                     delete current;
@@ -881,7 +881,7 @@ int main()
                     break;
             }
         }
-        catch (const lab2::Exception& error)
+        catch (const lab3::Exception& error)
         {
             cout << "Ошибка: "
                  << error.what()

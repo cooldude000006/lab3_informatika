@@ -2,7 +2,7 @@
 #include "ienumerator.h"
 #include "sequence.h"
 
-namespace lab2
+namespace lab3
 {
     // Итератор для ArraySequence
     template <typename T>

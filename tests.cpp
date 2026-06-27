@@ -23,24 +23,24 @@ TEST(VectorOperatorTest, ArrayVectorOperatorsWork)
     int firstItems[] = {1, 2, 3};
     int secondItems[] = {4, 5, 6};
 
-    lab2::ArrayVector<int> first(
+    lab3::ArrayVector<int> first(
         firstItems,
         3
     );
 
-    lab2::ListVector<int> second(
+    lab3::ListVector<int> second(
         secondItems,
         3
     );
 
-    lab2::ArrayVector<int> sum =
+    lab3::ArrayVector<int> sum =
         first + second;
 
     EXPECT_EQ(sum[0], 5);
     EXPECT_EQ(sum[1], 7);
     EXPECT_EQ(sum[2], 9);
 
-    lab2::ArrayVector<int> multiplied =
+    lab3::ArrayVector<int> multiplied =
         first * 3;
 
     EXPECT_EQ(multiplied[0], 3);
@@ -55,24 +55,24 @@ TEST(VectorOperatorTest, ListVectorOperatorsWork)
     int firstItems[] = {1, 2, 3};
     int secondItems[] = {4, 5, 6};
 
-    lab2::ListVector<int> first(
+    lab3::ListVector<int> first(
         firstItems,
         3
     );
 
-    lab2::ArrayVector<int> second(
+    lab3::ArrayVector<int> second(
         secondItems,
         3
     );
 
-    lab2::ListVector<int> sum =
+    lab3::ListVector<int> sum =
         first + second;
 
     EXPECT_EQ(sum[0], 5);
     EXPECT_EQ(sum[1], 7);
     EXPECT_EQ(sum[2], 9);
 
-    lab2::ListVector<int> multiplied =
+    lab3::ListVector<int> multiplied =
         first * 4;
 
     EXPECT_EQ(multiplied[0], 4);
@@ -85,11 +85,11 @@ TEST(VectorOperatorTest, AdditionWithDifferentDimensionsThrows)
     int firstItems[] = {1, 2, 3};
     int secondItems[] = {4, 5};
 
-    lab2::ArrayVector<int> first(firstItems,3);
+    lab3::ArrayVector<int> first(firstItems,3);
 
-    lab2::ListVector<int> second(secondItems,2);
+    lab3::ListVector<int> second(secondItems,2);
 
-    EXPECT_THROW(first + second,lab2::SizeMismatchException);
+    EXPECT_THROW(first + second,lab3::SizeMismatchException);
 }
 
 //неправильный индекс через operator[]
@@ -97,13 +97,13 @@ TEST(VectorOperatorTest, BracketsInvalidIndexThrows)
 {
     int items[] = {10, 20, 30};
 
-    lab2::ArrayVector<int> arrayVector(items,3);
+    lab3::ArrayVector<int> arrayVector(items,3);
 
-    lab2::ListVector<int> listVector(items,3);
+    lab3::ListVector<int> listVector(items,3);
 
-    EXPECT_THROW(arrayVector[3],lab2::IndexOutOfRangeException);
+    EXPECT_THROW(arrayVector[3],lab3::IndexOutOfRangeException);
 
-    EXPECT_THROW(listVector[3],lab2::IndexOutOfRangeException);
+    EXPECT_THROW(listVector[3],lab3::IndexOutOfRangeException);
 }
 
 //операторы не изм исходный вектор
@@ -112,13 +112,13 @@ TEST(VectorOperatorTest, OperatorsDoNotChangeOriginalVectors)
     int firstItems[] = {1, 2, 3};
     int secondItems[] = {4, 5, 6};
 
-    lab2::ArrayVector<int> first(firstItems,3);
+    lab3::ArrayVector<int> first(firstItems,3);
 
-    lab2::ListVector<int> second(secondItems,3);
+    lab3::ListVector<int> second(secondItems,3);
 
-    lab2::ArrayVector<int> sum = first + second;
+    lab3::ArrayVector<int> sum = first + second;
 
-    lab2::ArrayVector<int> multiplied = first * 10;
+    lab3::ArrayVector<int> multiplied = first * 10;
 
     // Проверяем результаты.
     EXPECT_EQ(sum[0], 5);
@@ -139,7 +139,7 @@ TEST(VectorReduceTest, UsesElementThenAccumulatorOrder)
 {
     int items[] = {1, 2, 3};
 
-    lab2::ArrayVector<int> vector(
+    lab3::ArrayVector<int> vector(
         items,
         3
     );
@@ -161,7 +161,7 @@ TEST(ListVectorTest, ConstructionAndAccess)
 {
     int items[] = {10, 20, 30};
 
-    lab2::ListVector<int> vector(items, 3);
+    lab3::ListVector<int> vector(items, 3);
 
     EXPECT_EQ(vector.GetDimension(), 3u);
     EXPECT_EQ(vector.GetCount(), 3u);
@@ -174,7 +174,7 @@ TEST(ListVectorTest, ConstructionAndAccess)
 //конструктор по размерности
 TEST(ListVectorTest, DimensionConstructor)
 {
-    lab2::ListVector<int> vector(4);
+    lab3::ListVector<int> vector(4);
 
     EXPECT_EQ(vector.GetDimension(), 4u);
 
@@ -189,9 +189,9 @@ TEST(ListVectorTest, NegativeDimensionThrows)
 {
     EXPECT_THROW(
         {
-            lab2::ListVector<int> vector(-1);
+            lab3::ListVector<int> vector(-1);
         },
-        lab2::InvalidOperationException
+        lab3::InvalidOperationException
     );
 }
 
@@ -200,25 +200,25 @@ TEST(ListVectorTest, InvalidIndexThrows)
 {
     int items[] = {1, 2, 3};
 
-    lab2::ListVector<int> vector(items, 3);
+    lab3::ListVector<int> vector(items, 3);
 
     EXPECT_THROW(
         vector.Get(vector.GetDimension()),
-        lab2::IndexOutOfRangeException
+        lab3::IndexOutOfRangeException
     );
 }
 
 //копирующий конструктор
 TEST(ListVectorTest, CopyConstructorCreatesIndependentCopy)
 {
-    lab2::ListVector<int>* copy = nullptr;
+    lab3::ListVector<int>* copy = nullptr;
 
     {
         int items[] = {1, 2, 3};
 
-        lab2::ListVector<int> original(items, 3);
+        lab3::ListVector<int> original(items, 3);
 
-        copy = new lab2::ListVector<int>(
+        copy = new lab3::ListVector<int>(
             original
         );
     }
@@ -237,7 +237,7 @@ TEST(ListVectorTest, AssignmentCreatesIndependentCopy)
 {
     int targetItems[] = {10, 20};
 
-    lab2::ListVector<int> target(
+    lab3::ListVector<int> target(
         targetItems,
         2
     );
@@ -245,7 +245,7 @@ TEST(ListVectorTest, AssignmentCreatesIndependentCopy)
     {
         int sourceItems[] = {1, 2, 3};
 
-        lab2::ListVector<int> source(
+        lab3::ListVector<int> source(
             sourceItems,
             3
         );
@@ -271,17 +271,17 @@ TEST(ListVectorTest, Addition)
     int firstItems[] = {1, 2, 3};
     int secondItems[] = {4, 5, 6};
 
-    lab2::ListVector<int> first(
+    lab3::ListVector<int> first(
         firstItems,
         3
     );
 
-    lab2::ListVector<int> second(
+    lab3::ListVector<int> second(
         secondItems,
         3
     );
 
-    lab2::IVector<int>* result =
+    lab3::IVector<int>* result =
         first.Add(second);
 
     ASSERT_NE(result, nullptr);
@@ -304,17 +304,17 @@ TEST(ListVectorTest, ScalarMultiplicationAndDotProduct)
     int firstItems[] = {1, 2, 3};
     int secondItems[] = {4, 5, 6};
 
-    lab2::ListVector<int> first(
+    lab3::ListVector<int> first(
         firstItems,
         3
     );
 
-    lab2::ListVector<int> second(
+    lab3::ListVector<int> second(
         secondItems,
         3
     );
 
-    lab2::IVector<int>* multiplied =
+    lab3::IVector<int>* multiplied =
         first.MultiplyByScalar(3);
 
     ASSERT_NE(multiplied, nullptr);
@@ -333,7 +333,7 @@ TEST(ListVectorTest, Norm)
 {
     double items[] = {3.0, 4.0};
 
-    lab2::ListVector<double> vector(
+    lab3::ListVector<double> vector(
         items,
         2
     );
@@ -347,24 +347,24 @@ TEST(ListVectorTest, DifferentDimensionsThrow)
     int firstItems[] = {1, 2, 3};
     int secondItems[] = {4, 5};
 
-    lab2::ListVector<int> first(
+    lab3::ListVector<int> first(
         firstItems,
         3
     );
 
-    lab2::ListVector<int> second(
+    lab3::ListVector<int> second(
         secondItems,
         2
     );
 
     EXPECT_THROW(
         first.Add(second),
-        lab2::SizeMismatchException
+        lab3::SizeMismatchException
     );
 
     EXPECT_THROW(
         first.DotProduct(second),
-        lab2::SizeMismatchException
+        lab3::SizeMismatchException
     );
 }
 
@@ -373,12 +373,12 @@ TEST(ListVectorTest, MapWhereReduce)
 {
     int items[] = {1, 2, 3, 4};
 
-    lab2::ListVector<int> vector(
+    lab3::ListVector<int> vector(
         items,
         4
     );
 
-    lab2::IVector<int>* mapped =
+    lab3::IVector<int>* mapped =
         vector.Map(
             [](int value)
             {
@@ -392,7 +392,7 @@ TEST(ListVectorTest, MapWhereReduce)
     EXPECT_EQ(mapped->Get(0), 2);
     EXPECT_EQ(mapped->Get(3), 8);
 
-    lab2::IVector<int>* filtered =
+    lab3::IVector<int>* filtered =
         vector.Where(
             [](int value)
             {
@@ -429,7 +429,7 @@ TEST(ListVectorTest, ComplexDotProductAndNorm)
         Complex(1.0, 1.0)
     };
 
-    lab2::ListVector<Complex> vector(
+    lab3::ListVector<Complex> vector(
         items,
         1
     );
@@ -453,7 +453,7 @@ TEST(ArrayVectorTest, ConstructionAndAccess)
 {
     int items[] = {10, 20, 30};
 
-    lab2::ArrayVector<int> vector(items, 3);
+    lab3::ArrayVector<int> vector(items, 3);
 
     EXPECT_EQ(vector.GetDimension(), 3u);
     EXPECT_EQ(vector.GetCount(), 3u);
@@ -467,12 +467,12 @@ TEST(ArrayVectorTest, WorksThroughInterfaces)
 {
     int items[] = {1, 2, 3};
 
-    lab2::ArrayVector<int> vector(items, 3);
+    lab3::ArrayVector<int> vector(items, 3);
 
-    lab2::IVector<int>* mathematicalVector =
+    lab3::IVector<int>* mathematicalVector =
         &vector;
 
-    lab2::ICollection<int>* collection =
+    lab3::ICollection<int>* collection =
         &vector;
 
     EXPECT_EQ(
@@ -489,25 +489,25 @@ TEST(ArrayVectorTest, InvalidIndexThrows)
 {
     int items[] = {1, 2, 3};
 
-    lab2::ArrayVector<int> vector(items, 3);
+    lab3::ArrayVector<int> vector(items, 3);
 
     EXPECT_THROW(
         vector.Get(vector.GetDimension()),
-        lab2::IndexOutOfRangeException
+        lab3::IndexOutOfRangeException
     );
 }
 
 //глубокое копирование
 TEST(ArrayVectorTest, CopyConstructorCreatesIndependentCopy)
 {
-    lab2::ArrayVector<int>* copy = nullptr;
+    lab3::ArrayVector<int>* copy = nullptr;
 
     {
         int items[] = {1, 2, 3};
 
-        lab2::ArrayVector<int> original(items, 3);
+        lab3::ArrayVector<int> original(items, 3);
 
-        copy = new lab2::ArrayVector<int>(
+        copy = new lab3::ArrayVector<int>(
             original
         );
     }
@@ -527,12 +527,12 @@ TEST(ArrayVectorTest, AssignmentCreatesIndependentCopy)
     int firstItems[] = {1, 2, 3};
     int secondItems[] = {10, 20};
 
-    lab2::ArrayVector<int> source(
+    lab3::ArrayVector<int> source(
         firstItems,
         3
     );
 
-    lab2::ArrayVector<int> target(
+    lab3::ArrayVector<int> target(
         secondItems,
         2
     );
@@ -557,17 +557,17 @@ TEST(ArrayVectorTest, Addition)
     int firstItems[] = {1, 2, 3};
     int secondItems[] = {4, 5, 6};
 
-    lab2::ArrayVector<int> first(
+    lab3::ArrayVector<int> first(
         firstItems,
         3
     );
 
-    lab2::ArrayVector<int> second(
+    lab3::ArrayVector<int> second(
         secondItems,
         3
     );
 
-    lab2::IVector<int>* result =
+    lab3::IVector<int>* result =
         first.Add(second);
 
     ASSERT_NE(result, nullptr);
@@ -590,24 +590,24 @@ TEST(ArrayVectorTest, DifferentDimensionsThrow)
     int firstItems[] = {1, 2, 3};
     int secondItems[] = {4, 5};
 
-    lab2::ArrayVector<int> first(
+    lab3::ArrayVector<int> first(
         firstItems,
         3
     );
 
-    lab2::ArrayVector<int> second(
+    lab3::ArrayVector<int> second(
         secondItems,
         2
     );
 
     EXPECT_THROW(
         first.Add(second),
-        lab2::SizeMismatchException
+        lab3::SizeMismatchException
     );
 
     EXPECT_THROW(
         first.DotProduct(second),
-        lab2::SizeMismatchException
+        lab3::SizeMismatchException
     );
 }
 
@@ -616,9 +616,9 @@ TEST(ArrayVectorTest, MultiplyByScalar)
 {
     int items[] = {1, 2, 3};
 
-    lab2::ArrayVector<int> vector(items, 3);
+    lab3::ArrayVector<int> vector(items, 3);
 
-    lab2::IVector<int>* result =
+    lab3::IVector<int>* result =
         vector.MultiplyByScalar(4);
 
     ASSERT_NE(result, nullptr);
@@ -641,12 +641,12 @@ TEST(ArrayVectorTest, DotProduct)
     int firstItems[] = {1, 2, 3};
     int secondItems[] = {4, 5, 6};
 
-    lab2::ArrayVector<int> first(
+    lab3::ArrayVector<int> first(
         firstItems,
         3
     );
 
-    lab2::ArrayVector<int> second(
+    lab3::ArrayVector<int> second(
         secondItems,
         3
     );
@@ -661,7 +661,7 @@ TEST(ArrayVectorTest, Norm)
 {
     double items[] = {3.0, 4.0};
 
-    lab2::ArrayVector<double> vector(
+    lab3::ArrayVector<double> vector(
         items,
         2
     );
@@ -678,7 +678,7 @@ TEST(ArrayVectorTest, ComplexDotProductAndNorm)
         Complex(1.0, 1.0)
     };
 
-    lab2::ArrayVector<Complex> vector(
+    lab3::ArrayVector<Complex> vector(
         items,
         1
     );
@@ -700,12 +700,12 @@ TEST(ArrayVectorTest, MapWhereReduce)
 {
     int items[] = {1, 2, 3, 4};
 
-    lab2::ArrayVector<int> vector(
+    lab3::ArrayVector<int> vector(
         items,
         4
     );
 
-    lab2::IVector<int>* mapped =
+    lab3::IVector<int>* mapped =
         vector.Map(
             [](int value)
             {
@@ -719,7 +719,7 @@ TEST(ArrayVectorTest, MapWhereReduce)
     EXPECT_EQ(mapped->Get(0), 2);
     EXPECT_EQ(mapped->Get(3), 8);
 
-    lab2::IVector<int>* filtered =
+    lab3::IVector<int>* filtered =
         vector.Where(
             [](int value)
             {
@@ -754,20 +754,20 @@ TEST(VectorPolymorphismTest, ArrayAndListVectorsCanBeAdded)
     int arrayItems[] = {1, 2, 3};
     int listItems[] = {4, 5, 6};
 
-    lab2::ArrayVector<int> arrayVector(
+    lab3::ArrayVector<int> arrayVector(
         arrayItems,
         3
     );
 
-    lab2::ListVector<int> listVector(
+    lab3::ListVector<int> listVector(
         listItems,
         3
     );
 
-    lab2::IVector<int>* firstResult =
+    lab3::IVector<int>* firstResult =
         arrayVector.Add(listVector);
 
-    lab2::IVector<int>* secondResult =
+    lab3::IVector<int>* secondResult =
         listVector.Add(arrayVector);
 
     ASSERT_NE(firstResult, nullptr);
@@ -797,12 +797,12 @@ TEST(VectorPolymorphismTest, DotProductWorksBetweenArrayAndList)
     int arrayItems[] = {1, 2, 3};
     int listItems[] = {4, 5, 6};
 
-    lab2::ArrayVector<int> arrayVector(
+    lab3::ArrayVector<int> arrayVector(
         arrayItems,
         3
     );
 
-    lab2::ListVector<int> listVector(
+    lab3::ListVector<int> listVector(
         listItems,
         3
     );
@@ -823,15 +823,15 @@ TEST(VectorPolymorphismTest, WorksThroughAllBaseInterfaces)
 {
     int items[] = {10, 20, 30};
 
-    lab2::ArrayVector<int> vector(items, 3);
+    lab3::ArrayVector<int> vector(items, 3);
 
-    lab2::IVector<int>* mathematicalVector =
+    lab3::IVector<int>* mathematicalVector =
         &vector;
 
-    lab2::ICollection<int>* collection =
+    lab3::ICollection<int>* collection =
         &vector;
 
-    lab2::IEnumerable<int>* enumerable =
+    lab3::IEnumerable<int>* enumerable =
         &vector;
 
     EXPECT_EQ(
@@ -843,7 +843,7 @@ TEST(VectorPolymorphismTest, WorksThroughAllBaseInterfaces)
     EXPECT_EQ(collection->Get(0), 10);
     EXPECT_EQ(collection->Get(2), 30);
 
-    lab2::IEnumerator<int>* enumerator =
+    lab3::IEnumerator<int>* enumerator =
         enumerable->GetEnumerator();
 
     ASSERT_NE(enumerator, nullptr);
@@ -865,9 +865,9 @@ TEST(VectorEnumeratorTest, ArrayVectorEnumeratorWorks)
 {
     int items[] = {10, 20, 30};
 
-    lab2::ArrayVector<int> vector(items, 3);
+    lab3::ArrayVector<int> vector(items, 3);
 
-    lab2::IEnumerator<int>* enumerator =
+    lab3::IEnumerator<int>* enumerator =
         vector.GetEnumerator();
 
     ASSERT_NE(enumerator, nullptr);
@@ -922,9 +922,9 @@ TEST(VectorEnumeratorTest, ListVectorEnumeratorWorks)
 {
     int items[] = {5, 15, 25};
 
-    lab2::ListVector<int> vector(items, 3);
+    lab3::ListVector<int> vector(items, 3);
 
-    lab2::IEnumerator<int>* enumerator =
+    lab3::IEnumerator<int>* enumerator =
         vector.GetEnumerator();
 
     ASSERT_NE(enumerator, nullptr);
@@ -970,8 +970,8 @@ TEST(VectorEnumeratorTest, ListVectorEnumeratorWorks)
 //пустые мат векторы
 TEST(VectorBoundaryTest, EmptyVectorsWorkCorrectly)
 {
-    lab2::ArrayVector<int> arrayVector;
-    lab2::ListVector<int> listVector;
+    lab3::ArrayVector<int> arrayVector;
+    lab3::ListVector<int> listVector;
 
     EXPECT_EQ(arrayVector.GetDimension(), 0u);
     EXPECT_EQ(listVector.GetDimension(), 0u);
@@ -981,12 +981,12 @@ TEST(VectorBoundaryTest, EmptyVectorsWorkCorrectly)
 
     EXPECT_THROW(
         arrayVector.Get(0),
-        lab2::IndexOutOfRangeException
+        lab3::IndexOutOfRangeException
     );
 
     EXPECT_THROW(
         listVector.Get(0),
-        lab2::IndexOutOfRangeException
+        lab3::IndexOutOfRangeException
     );
 
     int arrayResult = arrayVector.Reduce(
@@ -1008,13 +1008,13 @@ TEST(VectorBoundaryTest, EmptyVectorsWorkCorrectly)
     EXPECT_EQ(arrayResult, 100);
     EXPECT_EQ(listResult, 100);
 
-    lab2::IVector<int>* sum =
+    lab3::IVector<int>* sum =
         arrayVector.Add(listVector);
 
     ASSERT_NE(sum, nullptr);
     EXPECT_EQ(sum->GetDimension(), 0u);
 
-    lab2::IVector<int>* mapped =
+    lab3::IVector<int>* mapped =
         arrayVector.Map(
             [](int value)
             {
@@ -1035,33 +1035,33 @@ TEST(VectorErrorTest, NullptrWithPositiveCountThrows)
 {
     EXPECT_THROW(
         {
-            lab2::ArrayVector<int> vector(
+            lab3::ArrayVector<int> vector(
                 nullptr,
                 3
             );
         },
-        lab2::InvalidOperationException
+        lab3::InvalidOperationException
     );
 
     EXPECT_THROW(
         {
-            lab2::ListVector<int> vector(
+            lab3::ListVector<int> vector(
                 nullptr,
                 3
             );
         },
-        lab2::InvalidOperationException
+        lab3::InvalidOperationException
     );
 }
 //нулевое кол-во координат
 TEST(VectorBoundaryTest, NullptrWithZeroCountCreatesEmptyVector)
 {
-    lab2::ArrayVector<int> arrayVector(
+    lab3::ArrayVector<int> arrayVector(
         nullptr,
         0
     );
 
-    lab2::ListVector<int> listVector(
+    lab3::ListVector<int> listVector(
         nullptr,
         0
     );
@@ -1078,16 +1078,16 @@ TEST(VectorErrorTest, NegativeDimensionThrows)
 {
     EXPECT_THROW(
         {
-            lab2::ArrayVector<int> vector(-1);
+            lab3::ArrayVector<int> vector(-1);
         },
-        lab2::InvalidOperationException
+        lab3::InvalidOperationException
     );
 
     EXPECT_THROW(
         {
-            lab2::ListVector<int> vector(-1);
+            lab3::ListVector<int> vector(-1);
         },
-        lab2::InvalidOperationException
+        lab3::InvalidOperationException
     );
 }
 
@@ -1097,34 +1097,34 @@ TEST(VectorErrorTest, DifferentImplementationsAndDimensionsThrow)
     int arrayItems[] = {1, 2, 3};
     int listItems[] = {4, 5};
 
-    lab2::ArrayVector<int> arrayVector(
+    lab3::ArrayVector<int> arrayVector(
         arrayItems,
         3
     );
 
-    lab2::ListVector<int> listVector(
+    lab3::ListVector<int> listVector(
         listItems,
         2
     );
 
     EXPECT_THROW(
         arrayVector.Add(listVector),
-        lab2::SizeMismatchException
+        lab3::SizeMismatchException
     );
 
     EXPECT_THROW(
         listVector.Add(arrayVector),
-        lab2::SizeMismatchException
+        lab3::SizeMismatchException
     );
 
     EXPECT_THROW(
         arrayVector.DotProduct(listVector),
-        lab2::SizeMismatchException
+        lab3::SizeMismatchException
     );
 
     EXPECT_THROW(
         listVector.DotProduct(arrayVector),
-        lab2::SizeMismatchException
+        lab3::SizeMismatchException
     );
 
     // После исключений исходные объекты должны работать.
@@ -1140,20 +1140,20 @@ TEST(VectorErrorTest, MapAndWherePropagateExceptions)
 {
     int items[] = {1, 2, 3, 4};
 
-    lab2::ArrayVector<int> vector(
+    lab3::ArrayVector<int> vector(
         items,
         4
     );
 
     EXPECT_THROW(
         {
-            lab2::IVector<int>* result =
+            lab3::IVector<int>* result =
                 vector.Map(
                     [](int value)
                     {
                         if (value == 2)
                         {
-                            throw lab2::InvalidOperationException(
+                            throw lab3::InvalidOperationException(
                                 "ошибка функции Map"
                             );
                         }
@@ -1166,18 +1166,18 @@ TEST(VectorErrorTest, MapAndWherePropagateExceptions)
             // если исключение ошибочно не возникло.
             delete result;
         },
-        lab2::InvalidOperationException
+        lab3::InvalidOperationException
     );
 
     EXPECT_THROW(
         {
-            lab2::IVector<int>* result =
+            lab3::IVector<int>* result =
                 vector.Where(
                     [](int value)
                     {
                         if (value == 3)
                         {
-                            throw lab2::InvalidOperationException(
+                            throw lab3::InvalidOperationException(
                                 "ошибка функции Where"
                             );
                         }
@@ -1188,7 +1188,7 @@ TEST(VectorErrorTest, MapAndWherePropagateExceptions)
 
             delete result;
         },
-        lab2::InvalidOperationException
+        lab3::InvalidOperationException
     );
 
     // Исходный вектор не должен измениться.
@@ -1205,9 +1205,9 @@ TEST(ICollectionTest, WorksWithArraySequence)
 {
     int items[] = {10, 20, 30};
 
-    lab2::MutableArraySequence<int> sequence(items, 3);
+    lab3::MutableArraySequence<int> sequence(items, 3);
 
-    lab2::ICollection<int>* collection = &sequence;
+    lab3::ICollection<int>* collection = &sequence;
 
     EXPECT_EQ(collection->GetCount(), 3u);
     EXPECT_EQ(
@@ -1229,9 +1229,9 @@ TEST(ICollectionTest, WorksWithListSequence)
 {
     int items[] = {5, 15, 25, 35};
 
-    lab2::ImmutableListSequence<int> sequence(items, 4);
+    lab3::ImmutableListSequence<int> sequence(items, 4);
 
-    lab2::ICollection<int>* collection = &sequence;
+    lab3::ICollection<int>* collection = &sequence;
 
     EXPECT_EQ(collection->GetCount(), 4u);
     EXPECT_EQ(
@@ -1249,13 +1249,13 @@ TEST(ICollectionTest, InvalidIndexThrows)
 {
     int items[] = {1, 2, 3};
 
-    lab2::MutableArraySequence<int> sequence(items, 3);
+    lab3::MutableArraySequence<int> sequence(items, 3);
 
-    lab2::ICollection<int>* collection = &sequence;
+    lab3::ICollection<int>* collection = &sequence;
 
     EXPECT_THROW(
         collection->Get(collection->GetCount()),
-        lab2::IndexOutOfRangeException
+        lab3::IndexOutOfRangeException
     );
 }
 
@@ -1265,7 +1265,7 @@ TEST(ICollectionTest, InvalidIndexThrows)
 TEST(DynamicArrayTest, ConstructorFromCArray)
 {
     int src[] = {10, 20, 30, 40, 50};
-    lab2::DynamicArray<int> arr(src, 5);
+    lab3::DynamicArray<int> arr(src, 5);
 
     EXPECT_EQ(arr.GetSize(), 5);
     EXPECT_EQ(arr.Get(0), 10);
@@ -1275,7 +1275,7 @@ TEST(DynamicArrayTest, ConstructorFromCArray)
 
 TEST(DynamicArrayTest, ConstructorWithSize)
 {
-    lab2::DynamicArray<int> arr(4);
+    lab3::DynamicArray<int> arr(4);
 
     EXPECT_EQ(arr.GetSize(), 4);
     // Элементы инициализированы значениями по умолчанию (0 для int)
@@ -1286,9 +1286,9 @@ TEST(DynamicArrayTest, ConstructorWithSize)
 TEST(DynamicArrayTest, CopyConstructor)
 {
     int src[] = {1, 2, 3};
-    lab2::DynamicArray<int> original(src, 3);
+    lab3::DynamicArray<int> original(src, 3);
 
-    lab2::DynamicArray<int> copy(original);
+    lab3::DynamicArray<int> copy(original);
 
     // Меняем оригинал
     original.Set(0, 999);
@@ -1303,8 +1303,8 @@ TEST(DynamicArrayTest, AssignmentOperator)
     int src1[] = {1, 2};
     int src2[] = {10, 20, 30};
 
-    lab2::DynamicArray<int> arr1(src1, 2);
-    lab2::DynamicArray<int> arr2(src2, 3);
+    lab3::DynamicArray<int> arr1(src1, 2);
+    lab3::DynamicArray<int> arr2(src2, 3);
 
     arr1 = arr2;  // Присваивание
 
@@ -1318,21 +1318,21 @@ TEST(DynamicArrayTest, AssignmentOperator)
 
 TEST(DynamicArrayTest, IndexOutOfRangeException)
 {
-    lab2::DynamicArray<int> arr(3);
+    lab3::DynamicArray<int> arr(3);
 
     // Отрицательный индекс
-    EXPECT_THROW(arr.Get(-1), lab2::IndexOutOfRangeException);
-    EXPECT_THROW(arr.Set(-1, 5), lab2::IndexOutOfRangeException);
+    EXPECT_THROW(arr.Get(-1), lab3::IndexOutOfRangeException);
+    EXPECT_THROW(arr.Set(-1, 5), lab3::IndexOutOfRangeException);
 
     // Индекс >= size
-    EXPECT_THROW(arr.Get(3), lab2::IndexOutOfRangeException);
-    EXPECT_THROW(arr.Set(5, 10), lab2::IndexOutOfRangeException);
+    EXPECT_THROW(arr.Get(3), lab3::IndexOutOfRangeException);
+    EXPECT_THROW(arr.Set(5, 10), lab3::IndexOutOfRangeException);
 }
 
 TEST(DynamicArrayTest, Resize)
 {
     int src[] = {10, 20, 30};
-    lab2::DynamicArray<int> arr(src, 3);
+    lab3::DynamicArray<int> arr(src, 3);
 
     // Увеличение размера
     arr.Resize(5);
@@ -1348,13 +1348,13 @@ TEST(DynamicArrayTest, Resize)
     EXPECT_EQ(arr.Get(0), 10);
     EXPECT_EQ(arr.Get(1), 20);
     // arr.Get(2) теперь выбросит исключение
-    EXPECT_THROW(arr.Get(2), lab2::IndexOutOfRangeException);
+    EXPECT_THROW(arr.Get(2), lab3::IndexOutOfRangeException);
 }
 
 TEST(DynamicArrayTest, OperatorBracketRead)
 {
     int src[] = {5, 15, 25};
-    lab2::DynamicArray<int> arr(src, 3);
+    lab3::DynamicArray<int> arr(src, 3);
 
     EXPECT_EQ(arr[0], 5);
     EXPECT_EQ(arr[1], 15);
@@ -1363,7 +1363,7 @@ TEST(DynamicArrayTest, OperatorBracketRead)
 
 TEST(DynamicArrayTest, IsEmptyAndClear)
 {
-    lab2::DynamicArray<int> arr(2);
+    lab3::DynamicArray<int> arr(2);
     EXPECT_FALSE(arr.IsEmpty());
 
     arr.Clear();
@@ -1375,16 +1375,16 @@ TEST(DynamicArrayTest, NullptrWithPositiveCountThrows)
 {
     EXPECT_THROW(
         {
-            lab2::DynamicArray<int> array(nullptr, 3);
+            lab3::DynamicArray<int> array(nullptr, 3);
         },
-        lab2::InvalidOperationException
+        lab3::InvalidOperationException
     );
 }
 
 // тесты для LinkedList
 TEST(LinkedListTest, BasicOperations)
 {
-    lab2::LinkedList<int> list;
+    lab3::LinkedList<int> list;
 
     EXPECT_EQ(list.GetLength(), 0);
 
@@ -1406,7 +1406,7 @@ TEST(LinkedListTest, BasicOperations)
 TEST(LinkedListTest, InsertAt)
 {
     int src[] = {1, 2, 4, 5};
-    lab2::LinkedList<int> list(src, 4);
+    lab3::LinkedList<int> list(src, 4);
 
     // Вставка в середину
     list.InsertAt(3, 2);  // Вставить 3 на индекс 2
@@ -1419,9 +1419,9 @@ TEST(LinkedListTest, InsertAt)
 TEST(LinkedListTest, GetSubList)
 {
     int src[] = {10, 20, 30, 40, 50};
-    lab2::LinkedList<int> list(src, 5);
+    lab3::LinkedList<int> list(src, 5);
 
-    lab2::LinkedList<int>* sub = list.GetSublist(1, 3);  // {20, 30, 40}
+    lab3::LinkedList<int>* sub = list.GetSublist(1, 3);  // {20, 30, 40}
 
     EXPECT_EQ(sub->GetLength(), 3);
     EXPECT_EQ(sub->GetFirst(), 20);
@@ -1435,10 +1435,10 @@ TEST(LinkedListTest, Concat)
     int src1[] = {1, 2};
     int src2[] = {3, 4, 5};
 
-    lab2::LinkedList<int> list1(src1, 2);
-    lab2::LinkedList<int> list2(src2, 3);
+    lab3::LinkedList<int> list1(src1, 2);
+    lab3::LinkedList<int> list2(src2, 3);
 
-    lab2::LinkedList<int>* result = list1.Concat(&list2);
+    lab3::LinkedList<int>* result = list1.Concat(&list2);
 
     EXPECT_EQ(result->GetLength(), 5);
     EXPECT_EQ(result->Get(0), 1);
@@ -1449,26 +1449,26 @@ TEST(LinkedListTest, Concat)
 
 TEST(LinkedListTest, Exceptions)
 {
-    lab2::LinkedList<int> list;
+    lab3::LinkedList<int> list;
 
     // Пустой список
-    EXPECT_THROW(list.GetFirst(), lab2::InvalidOperationException);
-    EXPECT_THROW(list.GetLast(), lab2::InvalidOperationException);
-    EXPECT_THROW(list.Get(0), lab2::IndexOutOfRangeException);
+    EXPECT_THROW(list.GetFirst(), lab3::InvalidOperationException);
+    EXPECT_THROW(list.GetLast(), lab3::InvalidOperationException);
+    EXPECT_THROW(list.Get(0), lab3::IndexOutOfRangeException);
 
     // Неправильный индекс
     list.Append(10);
-    EXPECT_THROW(list.Get(-1), lab2::IndexOutOfRangeException);
-    EXPECT_THROW(list.Get(1), lab2::IndexOutOfRangeException);
-    EXPECT_THROW(list.InsertAt(5, 5), lab2::IndexOutOfRangeException);  // index > size
+    EXPECT_THROW(list.Get(-1), lab3::IndexOutOfRangeException);
+    EXPECT_THROW(list.Get(1), lab3::IndexOutOfRangeException);
+    EXPECT_THROW(list.InsertAt(5, 5), lab3::IndexOutOfRangeException);  // index > size
 }
 
 TEST(LinkedListTest, CopyConstructor)
 {
     int src[] = {100, 200};
-    lab2::LinkedList<int> original(src, 2);
+    lab3::LinkedList<int> original(src, 2);
 
-    lab2::LinkedList<int> copy(original);
+    lab3::LinkedList<int> copy(original);
 
     original.Append(300);  // Меняем оригинал
 
@@ -1480,20 +1480,20 @@ TEST(LinkedListTest, NullptrWithPositiveCountThrows)
 {
     EXPECT_THROW(
         {
-            lab2::LinkedList<int> list(nullptr, 3);
+            lab3::LinkedList<int> list(nullptr, 3);
         },
-        lab2::InvalidOperationException
+        lab3::InvalidOperationException
     );
 }
 
 TEST(LinkedListTest, InsertAtIndexEqualToLengthThrows)
 {
     int items[] = {1, 2, 3};
-    lab2::LinkedList<int> list(items, 3);
+    lab3::LinkedList<int> list(items, 3);
 
     EXPECT_THROW(
         list.InsertAt(4, list.GetLength()),
-        lab2::IndexOutOfRangeException
+        lab3::IndexOutOfRangeException
     );
 
     // После исключения список не должен измениться.
@@ -1506,7 +1506,7 @@ TEST(LinkedListTest, InsertAtIndexEqualToLengthThrows)
 TEST(SequencePolymorphismTest, ArraySequenceViaBasePointer)
 {
     int src[] = {10, 20, 30};
-    lab2::Sequence<int>* seq = new lab2::MutableArraySequence<int>(src, 3);
+    lab3::Sequence<int>* seq = new lab3::MutableArraySequence<int>(src, 3);
 
     // Вызываем виртуальные методы через базовый указатель
     EXPECT_EQ(seq->GetLength(), 3);
@@ -1520,7 +1520,7 @@ TEST(SequencePolymorphismTest, ArraySequenceViaBasePointer)
 TEST(SequencePolymorphismTest, ListSequenceViaBasePointer)
 {
     int src[] = {5, 15, 25};
-    lab2::Sequence<int>* seq = new lab2::ImmutableListSequence<int>(src, 3);
+    lab3::Sequence<int>* seq = new lab3::ImmutableListSequence<int>(src, 3);
 
     EXPECT_EQ(seq->GetLength(), 3);
     EXPECT_EQ(seq->Get(1), 15);
@@ -1531,10 +1531,10 @@ TEST(SequencePolymorphismTest, ListSequenceViaBasePointer)
 TEST(SequencePolymorphismTest, MapViaBasePointer)
 {
     int src[] = {1, 2, 3, 4};
-    lab2::Sequence<int>* seq = new lab2::MutableListSequence<int>(src, 4);
+    lab3::Sequence<int>* seq = new lab3::MutableListSequence<int>(src, 4);
 
     // Map: умножить каждый элемент на 10
-    lab2::Sequence<int>* result = seq->Map([](int x) { return x * 10; });
+    lab3::Sequence<int>* result = seq->Map([](int x) { return x * 10; });
 
     EXPECT_EQ(result->GetLength(), 4);
     EXPECT_EQ(result->Get(0), 10);
@@ -1548,10 +1548,10 @@ TEST(SequencePolymorphismTest, MapWorksForImmutableArraySequence)
 {
     int src[] = {1, 2, 3, 4};
 
-    lab2::Sequence<int>* seq =
-        new lab2::ImmutableArraySequence<int>(src, 4);
+    lab3::Sequence<int>* seq =
+        new lab3::ImmutableArraySequence<int>(src, 4);
 
-    lab2::Sequence<int>* result =
+    lab3::Sequence<int>* result =
         seq->Map([](int x) { return x * 10; });
 
     ASSERT_NE(result, nullptr);
@@ -1574,10 +1574,10 @@ TEST(SequencePolymorphismTest, MapWorksForImmutableArraySequence)
 TEST(SequencePolymorphismTest, WhereViaBasePointer)
 {
     int src[] = {1, 2, 3, 4, 5, 6};
-    lab2::Sequence<int>* seq = new lab2::ImmutableArraySequence<int>(src, 6);
+    lab3::Sequence<int>* seq = new lab3::ImmutableArraySequence<int>(src, 6);
 
     // Where: оставить только чётные
-    lab2::Sequence<int>* evens = seq->Where([](int x) { return x % 2 == 0; });
+    lab3::Sequence<int>* evens = seq->Where([](int x) { return x % 2 == 0; });
 
     EXPECT_EQ(evens->GetLength(), 3);
     EXPECT_EQ(evens->Get(0), 2);
@@ -1591,10 +1591,10 @@ TEST(SequencePolymorphismTest, WhereWorksForImmutableListSequence)
 {
     int src[] = {1, 2, 3, 4, 5, 6};
 
-    lab2::Sequence<int>* seq =
-        new lab2::ImmutableListSequence<int>(src, 6);
+    lab3::Sequence<int>* seq =
+        new lab3::ImmutableListSequence<int>(src, 6);
 
-    lab2::Sequence<int>* result =
+    lab3::Sequence<int>* result =
         seq->Where([](int x) { return x > 3; });
 
     ASSERT_NE(result, nullptr);
@@ -1616,7 +1616,7 @@ TEST(SequencePolymorphismTest, WhereWorksForImmutableListSequence)
 TEST(SequencePolymorphismTest, ReduceViaBasePointer)
 {
     int src[] = {1, 2, 3, 4, 5};
-    lab2::Sequence<int>* seq = new lab2::MutableArraySequence<int>(src, 5);
+    lab3::Sequence<int>* seq = new lab3::MutableArraySequence<int>(src, 5);
 
     // Reduce: сумма всех элементов
     int sum = seq->Reduce([](int acc, int x) { return acc + x; }, 0);
@@ -1632,8 +1632,8 @@ TEST(MutableArraySequenceTest, CopyConstructorCreatesIndependentCopy)
 {
     int source[] = {1, 2, 3};
 
-    lab2::MutableArraySequence<int> original(source, 3);
-    lab2::MutableArraySequence<int> copy(original);
+    lab3::MutableArraySequence<int> original(source, 3);
+    lab3::MutableArraySequence<int> copy(original);
 
     copy[0] = 999;
     copy.Append(4);
@@ -1656,10 +1656,10 @@ TEST(MutableArraySequenceTest, ConcatDoesNotModifyOriginal)
     int firstItems[] = {1, 2, 3};
     int secondItems[] = {4, 5};
 
-    lab2::MutableArraySequence<int> first(firstItems, 3);
-    lab2::MutableArraySequence<int> second(secondItems, 2);
+    lab3::MutableArraySequence<int> first(firstItems, 3);
+    lab3::MutableArraySequence<int> second(secondItems, 2);
 
-    lab2::Sequence<int>* result = first.Concat(&second);
+    lab3::Sequence<int>* result = first.Concat(&second);
 
     ASSERT_NE(result, nullptr);
 
@@ -1688,8 +1688,8 @@ TEST(MutableArraySequenceTest, AssignmentCreatesIndependentCopy)
     int sourceItems[] = {1, 2, 3};
     int targetItems[] = {10, 20};
 
-    lab2::MutableArraySequence<int> source(sourceItems, 3);
-    lab2::MutableArraySequence<int> target(targetItems, 2);
+    lab3::MutableArraySequence<int> source(sourceItems, 3);
+    lab3::MutableArraySequence<int> target(targetItems, 2);
 
     target = source;
 
@@ -1714,11 +1714,11 @@ TEST(MutableArraySequenceTest, AssignmentCreatesIndependentCopy)
 TEST(MutableArraySequenceTest, InsertAtIndexEqualToLengthThrows)
 {
     int items[] = {1, 2, 3};
-    lab2::MutableArraySequence<int> sequence(items, 3);
+    lab3::MutableArraySequence<int> sequence(items, 3);
 
     EXPECT_THROW(
         sequence.InsertAt(4, sequence.GetLength()),
-        lab2::IndexOutOfRangeException
+        lab3::IndexOutOfRangeException
     );
 
     // После исключения последовательность не должна измениться.
@@ -1731,7 +1731,7 @@ TEST(MutableArraySequenceTest, InsertAtIndexEqualToLengthThrows)
 TEST(MutableArraySequenceTest, InsertAtLastValidIndexWorks)
 {
     int items[] = {1, 2, 3};
-    lab2::MutableArraySequence<int> sequence(items, 3);
+    lab3::MutableArraySequence<int> sequence(items, 3);
 
     // Индекс 2 допустим, поскольку длина до вставки равна 3.
     sequence.InsertAt(9, 2);
@@ -1749,8 +1749,8 @@ TEST(MutableListSequenceTest, AssignmentCreatesIndependentCopy)
     int sourceItems[] = {1, 2, 3};
     int targetItems[] = {10, 20};
 
-    lab2::MutableListSequence<int> source(sourceItems, 3);
-    lab2::MutableListSequence<int> target(targetItems, 2);
+    lab3::MutableListSequence<int> source(sourceItems, 3);
+    lab3::MutableListSequence<int> target(targetItems, 2);
 
     target = source;
 
@@ -1778,11 +1778,11 @@ TEST(ImmutableArraySequenceTest, AssignmentCreatesIndependentCopy)
 {
     int initialItems[] = {10, 20};
 
-    lab2::ImmutableArraySequence<int> target(initialItems, 2);
+    lab3::ImmutableArraySequence<int> target(initialItems, 2);
 
     {
         int sourceItems[] = {1, 2, 3};
-        lab2::ImmutableArraySequence<int> source(sourceItems, 3);
+        lab3::ImmutableArraySequence<int> source(sourceItems, 3);
 
         target = source;
 
@@ -1808,11 +1808,11 @@ TEST(ImmutableListSequenceTest, AssignmentCreatesIndependentCopy)
 {
     int initialItems[] = {10, 20};
 
-    lab2::ImmutableListSequence<int> target(initialItems, 2);
+    lab3::ImmutableListSequence<int> target(initialItems, 2);
 
     {
         int sourceItems[] = {1, 2, 3};
-        lab2::ImmutableListSequence<int> source(sourceItems, 3);
+        lab3::ImmutableListSequence<int> source(sourceItems, 3);
 
         target = source;
 
@@ -1836,11 +1836,11 @@ TEST(ImmutableListSequenceTest, AssignmentCreatesIndependentCopy)
 TEST(ImmutableListSequenceTest, InsertAtInvalidIndexThrows)
 {
     int items[] = {1, 2, 3};
-    lab2::ImmutableListSequence<int> sequence(items, 3);
+    lab3::ImmutableListSequence<int> sequence(items, 3);
 
     EXPECT_THROW(
         sequence.InsertAt(4, sequence.GetLength()),
-        lab2::IndexOutOfRangeException
+        lab3::IndexOutOfRangeException
     );
 
     // Исходная последовательность не должна измениться.
@@ -1854,7 +1854,7 @@ TEST(ImmutableListSequenceTest, InsertAtInvalidIndexThrows)
 TEST(MutableVsImmutableTest, MutableModifiesInPlace)
 {
     int src[] = {10, 20};
-    lab2::MutableArraySequence<int> seq(src, 2);
+    lab3::MutableArraySequence<int> seq(src, 2);
 
     auto* result = seq.Append(30);
 
@@ -1867,7 +1867,7 @@ TEST(MutableVsImmutableTest, MutableModifiesInPlace)
 TEST(MutableVsImmutableTest, ImmutableCreatesNewObject)
 {
     int src[] = {10, 20};
-    lab2::ImmutableArraySequence<int> seq(src, 2);
+    lab3::ImmutableArraySequence<int> seq(src, 2);
 
     auto* result = seq.Append(30);
 
@@ -1884,9 +1884,9 @@ TEST(MutableVsImmutableTest, ImmutableArrayPrependDoesNotModifyOriginal)
 {
     int src[] = {1, 2, 3};
 
-    lab2::ImmutableArraySequence<int> seq(src, 3);
+    lab3::ImmutableArraySequence<int> seq(src, 3);
 
-    lab2::Sequence<int>* result = seq.Prepend(9);
+    lab3::Sequence<int>* result = seq.Prepend(9);
 
     ASSERT_NE(result, nullptr);
     EXPECT_NE(result, &seq);
@@ -1910,7 +1910,7 @@ TEST(MutableVsImmutableTest, ImmutableArrayPrependDoesNotModifyOriginal)
 TEST(MutableVsImmutableTest, ImmutableInsertAtDoesNotModifyOriginal)
 {
     int src[] = {1, 3, 4};
-    lab2::ImmutableListSequence<int> seq(src, 3);
+    lab3::ImmutableListSequence<int> seq(src, 3);
 
     auto* result = seq.InsertAt(2, 1);  // Вставить 2 на индекс 1
 
@@ -1925,45 +1925,19 @@ TEST(MutableVsImmutableTest, ImmutableInsertAtDoesNotModifyOriginal)
 // тесты для Option
 TEST(OptionTest, SomeAndNone)
 {
-    auto some = lab2::Option<int>::Some(42);
+    auto some = lab3::Option<int>::Some(42);
     EXPECT_TRUE(some.HasValue());
     EXPECT_EQ(some.GetValue(), 42);
 
-    auto none = lab2::Option<int>::None();
+    auto none = lab3::Option<int>::None();
     EXPECT_FALSE(none.HasValue());
-    EXPECT_THROW(none.GetValue(), lab2::InvalidOperationException);
-}
-
-TEST(OptionTest, BoolConversion)
-{
-    auto some = lab2::Option<int>::Some(100);
-    if (some) {
-        SUCCEED() << "Some преобразуется в true";
-    } else {
-        FAIL();
-    }
-
-    auto none = lab2::Option<int>::None();
-    if (!none) {
-        SUCCEED() << "None преобразуется в false";
-    } else {
-        FAIL();
-    }
-}
-
-TEST(OptionTest, GetValueOr)
-{
-    auto some = lab2::Option<int>::Some(10);
-    auto none = lab2::Option<int>::None();
-
-    EXPECT_EQ(some.GetValueOr(999), 10);   // Есть значение → возвращаем его
-    EXPECT_EQ(none.GetValueOr(999), 999);  // Нет значения → возвращаем дефолт
+    EXPECT_THROW(none.GetValue(), lab3::InvalidOperationException);
 }
 
 TEST(TrySemanticsTest, TryGet)
 {
     int src[] = {5, 10, 15};
-    lab2::MutableArraySequence<int> seq(src, 3);
+    lab3::MutableArraySequence<int> seq(src, 3);
 
     // Корректный индекс
     auto opt = seq.TryGet(1);
@@ -1977,12 +1951,12 @@ TEST(TrySemanticsTest, TryGet)
 
 TEST(TrySemanticsTest, TryFirstAndTryLast)
 {
-    lab2::MutableListSequence<int> empty;
+    lab3::MutableListSequence<int> empty;
     EXPECT_FALSE(empty.TryFirst().HasValue());
     EXPECT_FALSE(empty.TryLast().HasValue());
 
     int src[] = {100, 200, 300};
-    lab2::ImmutableArraySequence<int> seq(src, 3);
+    lab3::ImmutableArraySequence<int> seq(src, 3);
 
     EXPECT_EQ(seq.TryFirst().GetValue(), 100);
     EXPECT_EQ(seq.TryLast().GetValue(), 300);
@@ -1992,9 +1966,9 @@ TEST(TrySemanticsTest, TryFirstAndTryLast)
 TEST(IteratorTest, ArrayEnumerator)
 {
     int src[] = {10, 20, 30};
-    lab2::MutableArraySequence<int> seq(src, 3);
+    lab3::MutableArraySequence<int> seq(src, 3);
 
-    lab2::IEnumerator<int>* it = seq.GetEnumerator();
+    lab3::IEnumerator<int>* it = seq.GetEnumerator();
 
     // Начальная позиция: до первого элемента
     EXPECT_FALSE(it->GetCurrent().HasValue());
@@ -2028,7 +2002,7 @@ TEST(IteratorTest, ListEnumeratorAfterEnd)
 {
     int items[] = {1, 2, 3};
 
-    lab2::MutableListSequence<int> sequence(items, 3);
+    lab3::MutableListSequence<int> sequence(items, 3);
     auto* iterator = sequence.GetEnumerator();
 
     // До начала обхода текущего элемента нет.
@@ -2054,9 +2028,9 @@ TEST(IteratorTest, ListEnumeratorAfterEnd)
 
 TEST(IteratorTest, EmptySequenceEnumerator)
 {
-    lab2::ImmutableListSequence<int> empty;
+    lab3::ImmutableListSequence<int> empty;
 
-    lab2::IEnumerator<int>* it = empty.GetEnumerator();
+    lab3::IEnumerator<int>* it = empty.GetEnumerator();
 
     EXPECT_FALSE(it->MoveNext());  // Сразу конец
     EXPECT_FALSE(it->GetCurrent().HasValue());

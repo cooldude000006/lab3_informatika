@@ -1,7 +1,7 @@
 #pragma once
 #include "exceptions.h"
 
-namespace lab2
+namespace lab3
 {
     template <typename T>
     class Option
@@ -36,11 +36,6 @@ namespace lab2
                 throw InvalidOperationException("Попытка получить значение из пустого Option");
             }
             return value_;
-        }
-
-        T GetValueOr(T defaultValue) const //Получение значения или значения по умолчанию
-        {
-            return has_value_ ? value_ : defaultValue;
         }
     };
 }

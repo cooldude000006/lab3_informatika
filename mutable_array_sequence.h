@@ -3,7 +3,7 @@
 #include "dynamic_array.h"
 #include "array_enumerator.h"
 
-namespace  lab2
+namespace  lab3
 {
     template<class T>
     class MutableArraySequence: public Sequence<T>
